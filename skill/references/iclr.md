@@ -66,6 +66,11 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
    "The idea is very neat and the theory seems well-executed." → scored 6 despite qualitative-only experiments.
    A genuinely clean theoretical contribution buys leniency on empirical evaluation — but only if the theory is airtight.
 
+10. **Empirical study without a new technique can be accepted if findings are timely, surprising, and comprehensive.** *(real ICLR 2024)*
+    Retrieval-augmented generation vs. long-context LLMs paper scored 6,8,6,8,6,8 (avg 7.0, accepted) despite reviewers explicitly noting "limited novelty" and "does not introduce any new technique."
+    What carried it: (a) timely question with practical stakes, (b) contradicted a prior paper's conclusions with better-controlled experiments, (c) 7 tasks × large 70B models, (d) findings were genuinely surprising.
+    Empirical papers need all four — timely + comprehensive + surprising + well-controlled. Missing any one of these lands at 5–6.
+
 ---
 
 ## 3. Reject Signals *(accumulating from real data)*
@@ -123,6 +128,41 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
     "The empirical evaluation is solely qualitative, which makes it impossible to assess whether there is a benefit."
     "The results are entirely qualitative (meaning they can be easily cherrypicked)."
     Seen across both rejected (3) and borderline accepted (6) papers — always cited as a weakness. Always add quantitative comparisons.
+
+16. **Experiments only on synthetic or single toy dataset — fatal for applied ML.** *(real ICLR 2024)*
+    "The comparison with baselines is carried out solely on a synthetic dataset, ColorMNIST."
+    "It seems necessary to consider experiments on fairness datasets (e.g., COMPAS, Adult) commonly used in the fairness literature."
+    Every subfield has canonical benchmarks. Missing them signals the authors don't know the field.
+
+17. **Subfield-specific required benchmarks not included.** *(real ICLR 2024)*
+    - Fairness: CelebA, COMPAS, Adult + Demographic Parity / Equalized Odds metrics
+    - GNN robustness: adaptive attacks, white-box + black-box, poison + evasion attacks
+    Reviewers list the exact missing benchmarks. Include them or explicitly justify why they're excluded.
+
+18. **Proof errors early in paper cause reviewers to stop reading entirely.** *(real ICLR 2024)*
+    "I ceased my examination of the subsequent proofs due to the glaring inadequacies in the mathematical statements presented thus far."
+    One bad theorem early kills the entire technical credibility of the paper.
+
+19. **Missing punctuation after equations cited as unprofessional.** *(real ICLR 2024)*
+    "A glaring oversight is the absence of punctuation marks following ALL equations throughout the document."
+    Seen in multiple papers — equations must end with period or comma like prose.
+
+20. **"Essentially the same as prior work" = novelty rejection.** *(real ICLR 2024)*
+    "The FAREContrast objective function is essentially the same as the one described at [prior work]."
+    Reviewers will find the closest prior work and do a line-by-line comparison. Differences must be explicit.
+
+21. **Method complexity must match the stated goal — contradiction is fatal.** *(real ICLR 2024)*
+    Graph coarsening paper claimed to scale to large graphs but had O(n²k) complexity and was only tested on small graphs — reviewers cited this directly as a fatal flaw.
+    "The proposed method is tested only on small graphs, which contradicts the motivation for graph coarsening."
+    If your paper's motivation is scalability, your method's complexity and your benchmark graphs must both reflect that.
+
+22. **Citing a paper in related work but not comparing to it = guaranteed reviewer callout.** *(real ICLR 2024)*
+    "Kumar 2023 is mentioned in Section 2.2 but no empirical comparison is provided."
+    Reviewers read your related work section and cross-check every cited method against your experiments. If you cite it, compare to it — or explicitly state why comparison is infeasible.
+
+23. **Method being slower than baseline in any setting must be addressed head-on.** *(real ICLR 2024)*
+    Graph coarsening paper showed the method was slower than training on the original graph in some configurations — reviewers penalized this without mercy.
+    If speed comparisons are unflattering in any setting, either exclude that setting with justification, or address it directly in the limitations section.
 
 15. **Framework/unification papers must justify advantage over existing frameworks.** *(real ICLR 2024)*
     "The work does not introduce a new concept and is a formulation of existing concepts into an existing framework."
