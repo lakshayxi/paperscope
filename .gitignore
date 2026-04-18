@@ -5,7 +5,8 @@ analysis_results.json
 # seen-IDs tracking files
 .seen_*.json
 
-# watch logs
+# local automation
+watch.py
 watch.log
 
 # old/stale scripts
