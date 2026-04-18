@@ -202,6 +202,23 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
     TopoGuide received three 2s from confidence-4/5 reviewers and one 8 from a confidence-3 reviewer. The outlier 8 did not rescue the paper.
     Per the 2025→2026 drift: AC meta-review now weights reviewer confidence when scores diverge. A single outlier high score from a low-confidence reviewer carries little weight against consensus from high-confidence reviewers.
 
+32. **Proof error = score 2 regardless of other merits — and multiple reviewers will independently find it.** *(real ICLR 2026)*
+    IDEA (Bayesian optimization) scored 2,2,2,2. Theorem 1's convergence proof was wrong: the regret bound reduced to O(N) (linear), meaning the algorithm doesn't converge. Three separate reviewers caught this independently without coordinating.
+    One reviewer wrote: "making the bound linear and thus trivial. An algorithm with linear regret does no better than just a naive strategy of constantly selecting the same point — linear regret means the algorithm does not converge."
+    A single broken theorem early in the paper ends the review. Verify every proof step produces the correct asymptotic before submission.
+
+33. **Inconsistent notation throughout a paper = reviewer distrust, not just minor polish.** *(real ICLR 2026)*
+    IDEA switched between f(x,ξ), y(x), and f(x) for the same function; used N and n interchangeably for sample count; used k and k₀ for the same kernel. Reviewers flagged this explicitly as a sign the paper was not carefully prepared, not just a cosmetic issue.
+    Notation inconsistency signals the paper hasn't been read end-to-end by the authors. Do a full symbol audit before submission.
+
+34. **Experimental setup that exceeds realistic use-case budgets invalidates conclusions.** *(real ICLR 2026)*
+    IDEA used 4000 warm-up queries to estimate noise before the BO algorithm even starts — "that typically already exceeds the budgets we have in BO, raising concerns as to how realistic this problem setting really is."
+    If your method requires more setup cost than a practitioner would have for the full task, reviewers will call it out as an unfair baseline.
+
+35. **Results without statistical significance markers are treated as inconclusive.** *(real ICLR 2026)*
+    "In almost all experiments, the shaded areas overlap meaning that the differences between the algorithms are not statistically significant."
+    Overlapping confidence intervals with no p-values = reviewers assume null result. Report std devs, CIs, and p-values; if CIs overlap, address it directly.
+
 ---
 
 ## 4. Hidden Criteria
@@ -247,6 +264,7 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
 - Adding a comparison to the specific baseline a reviewer named — especially if it confirms the method wins.
 - *(confirmed ICLR 2024)* "After author feedback, score is upgraded." — new numbers only, not re-explanation.
 - Watch for explicit signals: "I am willing to raise the score for further explanations" — these reviewers are reachable. Address their exact question directly and concisely.
+- *(confirmed ICLR 2026)* "I am inclined to give it a score of 7–8. However, since the current scoring system cancels a 7, I am provisionally assigning a 6. If the authors can address a substantial portion of my concerns, I would be happy to raise my score to 8 or higher." — FSF few-shot paper scored 4,6,8,8 (avg 6.5, likely accepted). The 6 was explicitly provisional; the reviewer named the exact missing ablation (OP without FSF) and missing baselines (GDA-CLIP, TIMO). This is the clearest rebuttal upgrade signal: reviewer names the score they want to give, the system prevents it, and they tell you exactly what to add.
 
 **What has no effect:**
 - Re-stating the same claims from the paper more forcefully.
@@ -261,3 +279,4 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
 - Core assumption shown to be violated by reviewer's own experiment.
 - *(confirmed ICLR 2024)* Unfair baseline due to pretraining data overlap — score stays at 3.
 - *(confirmed ICLR 2024)* "Figures and tables are almost illegible" — signals deeper problems.
+- *(confirmed ICLR 2026)* Incorrect convergence proof — IDEA scored 2,2,2,2 and no rebuttal could fix Theorem 1 being provably wrong (linear regret bound).
