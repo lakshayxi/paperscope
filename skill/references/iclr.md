@@ -169,6 +169,39 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
     "Data dependent coupling was already introduced in Flow-Matching, which is an essentially equivalent framework."
     Reviewers will find the closest equivalent framework and ask: what does this add? Answer it explicitly in the paper.
 
+24. **Novel contribution must be written as equations — prose description alone is insufficient.** *(real ICLR 2026)*
+    TopoGuide (3D molecule finetuning) scored 2,2,2,8 (avg 3.5) partly because: "the paper only provides two known formulas in the preliminaries section and offers no expressions for its own methodology, especially for the loss function. A mere textual description is insufficient."
+    If your method has a loss function, an objective, or a core operation — write the equation. Reviewers treat missing math as a signal the method is underspecified.
+
+25. **Background section bloat at the expense of methodology = flagged explicitly.** *(real ICLR 2026)*
+    "The paper dedicates an excessive amount of space (Section 3) to preliminary discussions of well-known concepts... In contrast, the core methodology (Section 4) is rushed and lacks crucial technical details."
+    Space is zero-sum. If preliminaries run long and methodology is thin, reviewers notice and interpret it as the contribution being weak.
+
+26. **Assembly of existing components without a unifying conceptual advance = engineering, not research.** *(real ICLR 2026)*
+    C2Seg (medical segmentation) scored 6,4,2,4 (avg 4.0): "The paper assembles several established components — soft contrastive learning, dual-path attention, and nonlinear gating — without offering a cohesive conceptual advance or deeper theoretical insight."
+    Combining three things that individually work is not a contribution unless you explain what only the combination enables.
+
+27. **Trendy component (KAN, Mamba, etc.) added without domain-specific justification gets penalized.** *(real ICLR 2026)*
+    "The motivation for using KAN is not convincing. The paper does not explain why a spline-based gating function is needed or what specific limitation of existing nonlinearities it solves."
+    "Table 3 even shows pure KAN encoder performs worse than hybrid, contradicting claims about superior nonlinear modeling."
+    Adding a trending architecture block without proving it addresses a specific limitation will be called out. If you use KAN/Mamba/etc., show what breaks without it.
+
+28. **Medical AI papers: narrow domain scope (e.g., single pathology) blocks acceptance.** *(real ICLR 2026)*
+    C2Seg used only two COVID chest datasets: "The experimental scope is narrow... both tasks are limited to binary lesion segmentation. This setup is not representative of real clinical scenarios."
+    Reviewers expect evaluation across multiple organs, modalities, and anatomies. COVID-only or single-disease papers must explicitly argue why generalization claims hold.
+
+29. **Missing comparisons to recent domain-specific baselines = score 2–4.** *(real ICLR 2026)*
+    Medical segmentation paper omitted: LLaVA-Med, BiomedCLIP, SAM-Med, MedSAM. Reviewer listed them by name.
+    Every subfield now has a set of "expected recent baselines." Missing them signals the authors don't follow the field. Check the last 2 years of the target venue for methods on the same task.
+
+30. **Small gain relative to added complexity must be justified.** *(real ICLR 2026)*
+    "The reported performance improvements are modest (~1–2% Dice) compared with the additional complexity introduced by multi-stage training and multiple attention and gating modules. The computational cost–benefit trade-off is not justified."
+    If your improvement is single-digit percentage, you need either an efficiency argument or a theoretical explanation for why even small gains matter for the application.
+
+31. **Extreme reviewer score variance (e.g., 2,2,2,8) is a rejection signal in 2026.** *(real ICLR 2026)*
+    TopoGuide received three 2s from confidence-4/5 reviewers and one 8 from a confidence-3 reviewer. The outlier 8 did not rescue the paper.
+    Per the 2025→2026 drift: AC meta-review now weights reviewer confidence when scores diverge. A single outlier high score from a low-confidence reviewer carries little weight against consensus from high-confidence reviewers.
+
 ---
 
 ## 4. Hidden Criteria
