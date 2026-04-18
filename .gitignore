@@ -1,0 +1,29 @@
+# corpus data — generate locally with: python expl.py bulk
+corpus*.json
+analysis_results.json
+
+# seen-IDs tracking files
+.seen_*.json
+
+# watch logs
+watch.log
+
+# old/stale scripts
+fetch_and_train.py
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# env
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
