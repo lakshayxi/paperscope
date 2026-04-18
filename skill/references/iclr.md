@@ -62,6 +62,10 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
 8. **Score upgrades after rebuttal only come from new experiments.** *(real ICLR 2024)*
    "After author feedback, score is upgraded." — triggered by new numbers, not re-explanation.
 
+9. **Neat unifying idea with solid theory can get through even with weak experiments.** *(real ICLR 2024)*
+   "The idea is very neat and the theory seems well-executed." → scored 6 despite qualitative-only experiments.
+   A genuinely clean theoretical contribution buys leniency on empirical evaluation — but only if the theory is airtight.
+
 ---
 
 ## 3. Reject Signals *(accumulating from real data)*
@@ -82,25 +86,48 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
    "Lemma 3 assumes bounded gradient norm but this is never verified empirically or justified theoretically."
 
 6. **Missing a specific named paper reviewers expect.** *(real ICLR 2024)*
-   "An important related work is missing. CoSCL is a recent ensemble-based method that also trains multiple parameter modes in parallel... an in-depth comparison is strongly encouraged."
-   Reviewers at ICLR name the exact paper they expect. If it's missing, the score drops to 3.
+   "An important related work is missing. CoSCL is a recent ensemble-based method... an in-depth comparison is strongly encouraged."
+   Reviewers name the exact paper they expect. Missing it drops the score to 3.
 
-2. **Poor presentation — theorem with undefined symbols.**
-   "I really do not understand the statement of Theorem 1; there are either undefined symbols like T(i) or odd notation."
+7. **Poor presentation — undefined symbols, illegible figures.** *(real ICLR 2024)*
+   "I really do not understand the statement of Theorem 1; there are undefined symbols like T(i)."
    "Figures and tables are almost illegible."
-   Presentation failures at ICLR get scored harshly — reviewers see it as disrespect for their time.
+   Presentation failures are scored harshly — reviewers see it as disrespect for their time.
 
-3. **Unfair baseline: data leakage from pretraining.**
+8. **Inaccessible writing — even technically solid work gets rejected.** *(real ICLR 2024)*
+   "The results are important enough that the paper ought to be substantially rewritten and resubmitted. I cannot recommend acceptance in the current form."
+   "In its current form, it is inaccessible even to experts, leave alone non-experts."
+   A technically correct paper with unreadable notation will score 3 regardless of results.
+
+9. **Unfair baseline: data leakage from pretraining.** *(real ICLR 2024)*
    "All experiments use a pre-trained checkpoint on ImageNet that overlaps with downstream datasets such as CIFAR-100."
-   This is the most-cited subtle flaw — reviewers check pretraining data overlap explicitly.
+   Reviewers check pretraining data overlap explicitly — this is the most common subtle flaw.
 
-4. **Missing standard evaluation settings.**
-   "The experiment does not cover the commonly used Class-IL or Domain-IL setting."
-   "I personally think the main CL setups are class-incremental, task-incremental, and domain-incremental. If the proposed method targets a different scenario, the authors should clarify."
+10. **Missing standard evaluation settings.** *(real ICLR 2024)*
+    "The experiment does not cover the commonly used Class-IL or Domain-IL setting."
 
-5. **Claims not supported by evidence, with vague terminology.**
-   "Sometimes you speak of global geometry of the parameter space, at other times of the loss landscape. A formal definition would greatly enhance clarity."
-   "The motivation is somehow intuitive and based on toy empirical results."
+11. **Extension papers need strong novelty — "not a surprise" is fatal.** *(real ICLR 2024)*
+    "It's not a surprise that Eq 4 can generalize these, and this is not new."
+    Papers framed as unifications or generalizations must show the generalization itself is hard and novel.
+
+12. **Informal language in formal writing.** *(real ICLR 2024)*
+    "The usage of contractions like 'don't' and 'won't' is not suitable for formal writing."
+    Cited explicitly as a weakness — signals the paper was rushed.
+
+13. **Core argument not convincingly justified — reviewer can't trace theory to claim.** *(real ICLR 2024)*
+    "I cannot tell how the high variance is connected to the generalization of diffusion models."
+    "The mathematical derivation looks like heuristics instead of rigorous proof."
+    For theory papers: if the causal chain from result → claim is unclear, the score lands at 3–5 regardless of technical correctness.
+
+14. **Qualitative-only experiments.** *(real ICLR 2024)*
+    "The empirical evaluation is solely qualitative, which makes it impossible to assess whether there is a benefit."
+    "The results are entirely qualitative (meaning they can be easily cherrypicked)."
+    Seen across both rejected (3) and borderline accepted (6) papers — always cited as a weakness. Always add quantitative comparisons.
+
+15. **Framework/unification papers must justify advantage over existing frameworks.** *(real ICLR 2024)*
+    "The work does not introduce a new concept and is a formulation of existing concepts into an existing framework."
+    "Data dependent coupling was already introduced in Flow-Matching, which is an essentially equivalent framework."
+    Reviewers will find the closest equivalent framework and ask: what does this add? Answer it explicitly in the paper.
 
 ---
 
@@ -146,6 +173,7 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
 - Clarifying a misunderstood contribution with a concrete counter-example.
 - Adding a comparison to the specific baseline a reviewer named — especially if it confirms the method wins.
 - *(confirmed ICLR 2024)* "After author feedback, score is upgraded." — new numbers only, not re-explanation.
+- Watch for explicit signals: "I am willing to raise the score for further explanations" — these reviewers are reachable. Address their exact question directly and concisely.
 
 **What has no effect:**
 - Re-stating the same claims from the paper more forcefully.
