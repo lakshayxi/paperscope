@@ -71,6 +71,22 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
     What carried it: (a) timely question with practical stakes, (b) contradicted a prior paper's conclusions with better-controlled experiments, (c) 7 tasks × large 70B models, (d) findings were genuinely surprising.
     Empirical papers need all four — timely + comprehensive + surprising + well-controlled. Missing any one of these lands at 5–6.
 
+11. **Dataset papers: breadth + automatic curation + cross-benchmark validation.** *(real ICLR 2024)*
+    LRV-Instruction scored 6,8,8,8 (avg 7.5). The recipe: (a) 16 tasks and 400k samples — breadth signals the dataset generalizes, (b) GPT-4-based automatic curation makes the scale credible and reproducible, (c) improvements showed up on 3 independent benchmarks (MME, POPE, GQA) the authors didn't build. Reviewers praised both points explicitly: "they show how finetuning on this dataset reduces hallucination but also interestingly in three different independent tasks."
+    Dataset contributions need all three — broad task coverage, scalable/automated construction, and cross-benchmark transfer. A dataset that only improves your own benchmark is suspect.
+
+12. **Pareto efficiency — better accuracy at lower cost — is a strong explicit accept signal.** *(real ICLR 2026)*
+    ASPEC scored 8,6,6,6 (avg 6.5). One reviewer explicitly called it "Pareto-efficient behavior is one of its key strengths" — higher accuracy than all baselines while costing less compute.
+    If your method wins on two axes simultaneously (accuracy AND efficiency), say so explicitly in the abstract and intro. Don't bury it in a table. Reviewers who see "outperforms baselines on 5 benchmarks at a fraction of the cost" treat it as a compelling signal — it rules out the standard "sure but at what cost?" objection before it's raised.
+
+13. **Decoupling previously coupled design choices = architectural flexibility contribution.** *(real ICLR 2026)*
+    FSF scored 4,6,8,8 (avg 6.5). The core contribution was decoupling encoder choice from alignment — prior methods required jointly trained vision-language models (CLIP). Reviewer: "This is a significant advantage, as it allows ones to plug in state-of-the-art vision or text models that may be more powerful or better suited for a specific domain."
+    When your method removes a constraint that forced users to make coupled decisions (must use X AND Y together), the flexibility argument is a genuine contribution even if your SOTA numbers are marginal. Name the constraint explicitly, name who it blocks, and show a concrete case where flexibility matters (e.g., medical domain with a specialist encoder).
+
+14. **Closed-form solution + learned residual = principled architecture that reviewers trust.** *(real ICLR 2026)*
+    FSF combined Orthogonal Procrustes (closed-form, geometry-preserving linear alignment) with a lightweight flow-matching prior (learned non-linear component). Reviewers praised this combination explicitly: "novel and effective." The structure signals the authors understood what each component does — the closed-form part handles what can be solved analytically, the learned part handles the residual.
+    When your architecture has one component with analytical guarantees and one learned component that handles what the analytical solution can't, explain that division explicitly. It distinguishes deliberate design from "we tried things until it worked."
+
 ---
 
 ## 3. Reject Signals *(accumulating from real data)*
