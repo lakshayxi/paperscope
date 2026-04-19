@@ -33,10 +33,10 @@ PaperScope fetches real reviews from top ML/NLP/Vision venues, builds calibratio
 ```bash
 git clone https://github.com/lakshayxi/paperscope
 cd paperscope
-pip install openreview-py requests
+pip install openreview-py
 ```
 
-Set credentials:
+Set credentials (free account at [openreview.net](https://openreview.net)):
 ```bash
 export OPENREVIEW_USERNAME='your_openreview_email'
 export OPENREVIEW_PASSWORD='your_openreview_password'
@@ -48,8 +48,11 @@ export OPENREVIEW_PASSWORD='your_openreview_password'
 
 ### Fetch reviews for a venue
 ```bash
-# Fetch 5 papers at a time (recommended — avoids rate limits)
-python expl.py bulk --venues iclr --years 2024 --per-venue 5
+# Fetch 20 papers at a time
+python expl.py bulk --venues iclr --years 2024 --per-venue 20
+
+# Fetch a specific year
+python expl.py bulk --venues neurips --years 2024 --per-venue 20
 
 # Fetch a single paper by URL
 python expl.py forum --url "https://openreview.net/forum?id=XXXXX"
@@ -58,19 +61,9 @@ python expl.py forum --url "https://openreview.net/forum?id=XXXXX"
 python expl.py bulk
 ```
 
-Fetched reviews are saved to `corpus_<venue>.json`. Re-runs automatically skip already-seen papers.
+Fetched reviews are saved to `corpus_<venue>.json`. Re-runs automatically skip already-seen papers — seen forum IDs are tracked in `.seen_*.json` files per venue.
 
-### Continuous batch fetching
-```bash
-python watch.py --venues iclr --years 2024 --per-venue 5 --interval 60
-```
-
-Fetches a new batch every 60 seconds, saves new papers to `corpus_iclr_inbox.json`, and waits until the inbox is cleared before fetching again.
-
-### Review a single paper
-```bash
-python expl.py forum --url "https://openreview.net/forum?id=XXXXX" --save
-```
+Each run also writes a `corpus_<venue>_inbox.json` containing only the **new** reviews from that batch. This is what you share with Claude to update the skill.
 
 ---
 
@@ -78,31 +71,49 @@ python expl.py forum --url "https://openreview.net/forum?id=XXXXX" --save
 
 The `skill/` directory contains pre-built calibration files ready to use with Claude Code.
 
+To install, copy the skill folder into Claude Code's skills directory:
+
 ```bash
-# Copy to Claude Code skills directory
-cp -r skill/ ~/.claude/skills/paperscope
+cp -r skill/ ~/Library/Application\ Support/Claude/skills/paperscope
 ```
+
+> The exact skills path may vary by OS and Claude Code version. Check your Claude Code settings for the correct location, or place the folder wherever Claude Code looks for custom skills.
 
 Then in any Claude Code session:
 - *"Review this paper for ICLR 2025"*
 - *"What score would this get at NeurIPS?"*
 - *"Write a reviewer report targeting CVPR"*
+- *"Is this paper ready to submit to ICLR 2026?"*
 
-The skill loads the venue-specific reference file before writing any review — scores, language patterns, hidden criteria, and rebuttal effectiveness are all calibrated to real data.
+The skill automatically detects the venue and loads the corresponding reference file — scores, language patterns, hidden criteria, and rebuttal effectiveness are all calibrated to real data.
 
 ---
 
-## Updating the Skill
+## Updating the Skill (the learning loop)
 
 The pre-built skill files in `skill/references/` are calibrated on real data. To improve them with fresh data:
 
-1. Fetch new reviews: `python expl.py bulk --venues iclr --per-venue 5`
-2. Share `corpus_iclr_inbox.json` with Claude
-3. Claude updates `skill/references/iclr.md` with new real patterns
-4. Delete inbox: `rm corpus_iclr_inbox.json`
+1. Fetch a new batch: `python expl.py bulk --venues iclr --years 2026 --per-venue 20`
+2. Tell Claude: **"inbox ready"** — Claude reads `corpus_iclr_inbox.json`
+3. Claude updates `skill/references/iclr.md` with new patterns tagged `*(real ICLR 2026)*`
+4. Delete the inbox: `rm corpus_iclr_inbox.json`
 5. Repeat
 
-Reference files **accumulate** knowledge — patterns are never deleted unless consistently contradicted across many papers.
+Reference files **accumulate** knowledge — patterns are never deleted, only added and tagged by year. This means you can ask Claude to review a paper specifically against 2026 trends vs. 2024 patterns.
+
+---
+
+## How calibration works
+
+Each `references/<venue>.md` file contains:
+
+- **Score calibration** — exact score labels (e.g. ICLR's "6 = marginally above acceptance threshold") and what they mean in practice
+- **Accept signals** — patterns that correlate with high scores, backed by real reviewer quotes
+- **Reject signals** — patterns that reliably cause rejection, with exact quotes showing how reviewers phrase them
+- **Hidden criteria** — unwritten rules inferred from review data (e.g. ICLR penalizes complexity relative to gain more than any other venue)
+- **Reviewer language** — exact phrases accept vs. reject tier reviewers use
+- **Year-over-year drift** — how standards shifted across years (e.g. 2025→2026: high reviewer score variance now hurts more than before)
+- **Rebuttal effectiveness** — what actually moves scores vs. what gets ignored
 
 ---
 
@@ -111,7 +122,6 @@ Reference files **accumulate** knowledge — patterns are never deleted unless c
 ```
 paperscope/
 ├── expl.py              # Main CLI — fetch, analyze, build skill
-├── watch.py             # Continuous batch watcher
 ├── skill/
 │   ├── SKILL.md         # Claude Code skill definition
 │   └── references/
@@ -124,25 +134,11 @@ paperscope/
 
 ---
 
-## How calibration works
+## Adding a New Venue
 
-Each `references/<venue>.md` file contains:
-- **Score calibration** — exact score labels and real-world acceptance meaning
-- **Accept signals** — patterns that correlate with high scores, with real reviewer quotes
-- **Reject signals** — patterns that correlate with rejection, with real reviewer quotes
-- **Hidden criteria** — unwritten rules inferred from review data
-- **Reviewer language** — exact phrases accept vs reject tier reviewers use
-- **Year-over-year drift** — how standards shifted across years
-- **Rebuttal effectiveness** — what actually moves scores vs what doesn't
-
----
-
-## Contributing
-
-To add a new venue:
-1. Add a tuple to `VENUES` in `expl.py`: `("CONF YEAR", "venue.org/CONF/YEAR/Conference", "v2", "family")`
-2. Add the display name to `VENUE_GROUPS`
-3. Run `python expl.py bulk --venues <family>`
+1. Add a tuple to `VENUES` in `expl.py`: `("CONF YEAR", "venue.org/CONF/YEAR/Conference", "v2", "Official_Review")`
+2. Add the display name to the right list in `VENUE_GROUPS`
+3. Run `python expl.py bulk --venues <family>` — corpus caching means only the new venue will be fetched
 
 ---
 
@@ -150,7 +146,6 @@ To add a new venue:
 
 - Python 3.11+
 - `openreview-py`
-- `requests`
 - OpenReview account (free at [openreview.net](https://openreview.net))
 
 No Anthropic API key needed — skill files are pre-built and Claude updates them directly in conversation.
