@@ -219,6 +219,19 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
     "In almost all experiments, the shaded areas overlap meaning that the differences between the algorithms are not statistically significant."
     Overlapping confidence intervals with no p-values = reviewers assume null result. Report std devs, CIs, and p-values; if CIs overlap, address it directly.
 
+36. **Evaluation metrics that match your training objectives = circular evaluation.** *(real ICLR 2026)*
+    KTGen (tabular generation) was penalized because its main fidelity metrics (KL divergence, Wasserstein per column, KS) directly correspond to the losses it was trained to minimize — naturally inflating reported numbers.
+    "The main fidelity metrics directly correspond to the optimized objectives, naturally favoring KTGen. More comprehensive metrics such as C2ST, α-precision, or β-recall are not reported."
+    Always report at least one held-out metric that is not in your training loss. If all your metrics are your objectives, reviewers will call it circular.
+
+37. **Claiming to handle knowledge type X but only implementing Y = overclaimed scope.** *(real ICLR 2026)*
+    KTGen categorized external knowledge as "unstructured textual and statistical" but the actual method only handled statistical knowledge. Reviewer: "No mechanism is provided for textual or semantic knowledge, making the claimed scope broader than what the method achieves."
+    If your intro or framework diagram promises a capability, the method section must deliver it. Unimplemented claims are treated as scope inflation.
+
+38. **Missing inference time and compute cost — called out by 3 out of 4 reviewers independently.** *(real ICLR 2026)*
+    SRT (time series super-resolution) had this raised by every reviewer except the confidence-2 outlier: "computational complexity and inference speed are relatively high... please analyze and compare"; "does not discuss overall training or inference cost"; "is the computational complexity during inference reasonable?"
+    For any generative model or multi-stage pipeline: always include inference time table vs. baselines. This is now a near-universal reviewer expectation.
+
 ---
 
 ## 4. Hidden Criteria
