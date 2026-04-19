@@ -83,6 +83,10 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
     FSF scored 4,6,8,8 (avg 6.5). The core contribution was decoupling encoder choice from alignment — prior methods required jointly trained vision-language models (CLIP). Reviewer: "This is a significant advantage, as it allows ones to plug in state-of-the-art vision or text models that may be more powerful or better suited for a specific domain."
     When your method removes a constraint that forced users to make coupled decisions (must use X AND Y together), the flexibility argument is a genuine contribution even if your SOTA numbers are marginal. Name the constraint explicitly, name who it blocks, and show a concrete case where flexibility matters (e.g., medical domain with a specialist encoder).
 
+15. **"Train once, deploy everywhere" paradigm is explicitly praised when backed by diverse benchmarks.** *(real ICLR 2026)*
+    NodePFN (graph foundation model) scored 8,6,4,4 (avg 5.5). The 8-reviewer explicitly praised: "The 'train once, deploy everywhere' paradigm offers practical benefits, removing the need for dataset-specific training while maintaining competitive performance." What made it credible: (a) 23 diverse benchmarks including both homophilic and heterophilic graphs, (b) no fine-tuning at test time, (c) still competitive with supervised GNNs trained per-dataset.
+    For foundation model or zero-shot transfer papers: the credibility threshold is breadth × diversity. You need enough benchmarks to rule out cherry-picking, and enough variation (easy + hard, in-distribution + out-of-distribution) to show the paradigm generalizes. Also quantify the amortization: how much compute does "train once" save vs. training a separate model per dataset? Reviewers who are excited about the paradigm will still ask this.
+
 14. **Closed-form solution + learned residual = principled architecture that reviewers trust.** *(real ICLR 2026)*
     FSF combined Orthogonal Procrustes (closed-form, geometry-preserving linear alignment) with a lightweight flow-matching prior (learned non-linear component). Reviewers praised this combination explicitly: "novel and effective." The structure signals the authors understood what each component does — the closed-form part handles what can be solved analytically, the learned part handles the residual.
     When your architecture has one component with analytical guarantees and one learned component that handles what the analytical solution can't, explain that division explicitly. It distinguishes deliberate design from "we tried things until it worked."
@@ -333,6 +337,18 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
     Multilingual pretraining study scored 6,8,4,4. A 4-reviewer explicitly flagged: "The finding that the curse of multilinguality relates to model capacity has already been stated in the original XLM-R paper." The paper presented this as a finding without positioning it against prior consensus.
     For empirical studies with multiple findings: each finding must be labeled as (a) contradicting prior work, (b) confirming under new conditions (larger scale, new setting), or (c) genuinely new. Don't present confirmation of established results as novel discoveries — reviewers will flag it. If your contribution is confirmation at a larger scale or in a new domain, say that explicitly and argue why it matters.
 
+58. **Method that requires manual domain decomposition must address automatic alternatives.** *(real ICLR 2026)*
+    LEICA (MARL) scored 4,6,4,2. The method's core requires hand-crafting an endogenous/exogenous state partition using domain knowledge of SMAX's data structure. Two reviewers independently flagged: "it is unclear whether it is suitable for other environments." The robustness claims were undermined because the foundation of the method can't be instantiated without knowing the environment.
+    If your method has a component that requires manual domain-specific specification (state decomposition, graph partition, feature grouping), reviewers expect either: (a) an automatic or learned alternative, or (b) an explicit argument for why manual specification is practical and how a practitioner would do it in a new domain. Ignoring this question reads as the authors haven't thought about generalization.
+
+59. **Results table with systematic blank entries = selective reporting.** *(real ICLR 2026)*
+    Membership Decoding paper scored 6,4,4,2. Table 2 had "most positions blank." Reviewer: "these missing results seriously puts into question the validity of the results of this study." Also: a HARD setting mentioned in the paper had no results anywhere.
+    Blank entries in a results table signal either the method failed in those conditions or the experiments weren't run — both trigger reviewer distrust. Either fill them in, explain in the caption why entries are absent (e.g., "method not applicable in this setting"), or remove the conditions from the table. A results table with unexplained gaps is treated as evidence of cherry-picking.
+
+60. **If your comparison baseline evaluated on architecture X, you must also evaluate on X.** *(real ICLR 2026)*
+    StoRM (mixup augmentation) compared against AdAutoMix and AutoMix, both of which evaluated on ViT-based architectures (DeiT-Small, Swin, ConvNeXt). StoRM only used CNNs. Reviewer: "The experiments lack generalization. The authors fail to demonstrate the performance of ViT-based methods."
+    When you compare against a paper, you inherit their evaluation scope. If your baselines evaluated on architecture families, model sizes, or tasks that you omit, reviewers will ask why. Either include them or explicitly argue why the omitted setting is out of scope.
+
 ---
 
 ## 4. Hidden Criteria
@@ -394,3 +410,4 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
 - *(confirmed ICLR 2024)* Unfair baseline due to pretraining data overlap — score stays at 3.
 - *(confirmed ICLR 2024)* "Figures and tables are almost illegible" — signals deeper problems.
 - *(confirmed ICLR 2026)* Incorrect convergence proof — IDEA scored 2,2,2,2 and no rebuttal could fix Theorem 1 being provably wrong (linear regret bound).
+- *(confirmed ICLR 2026)* Soundness theorem bug — ABS constrained generation paper had a fatal error in the proof of its main soundness guarantee. Confidence-5 reviewer: "Since that bug seems fatal, I won't bother to study the experiments unless urged to by the AC." When the main theorem is wrong, experiments become irrelevant to reviewers.
