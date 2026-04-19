@@ -237,6 +237,22 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
     JUSSA (steering for LLM judges) explicitly labeled the steered output as "more honest alternative" in the judge prompt. Reviewer: "This framing undermines the central claim that JUSSA's improvements arise from genuine model-level contrast rather than prompt wording."
     For papers that use LLM judges: the judge prompt must be neutral. If you tell the judge which response is supposed to be better, the AUROC gain is measuring label bias, not method effectiveness.
 
+40. **Submitting an incomplete manuscript = automatic rejection.** *(real ICLR 2026)*
+    Dyna-ViT had literal placeholder text "fill" and "fill if measured" in its experimental tables. Two reviewers with confidence 5 both responded: "I suggest the authors to complete this manuscript first and then submit."
+    Placeholder text, missing numbers, or clearly unfinished sections are noticed immediately. There is no partial credit — reviewers treat it as disrespect for the review process and decline to evaluate the work.
+
+41. **Fine-tuning that degrades the base model signals low data quality.** *(real ICLR 2026)*
+    GUIrilla fine-tuned Qwen2.5-VL 3B and 7B on collected data; both models scored *lower* on ScreenSpot-Pro after fine-tuning (3B: 23.9% → 19.17%). Reviewer: "This suggests the training data may be of low quality and may have harmed the base models' performance."
+    Always report base model performance alongside fine-tuned performance. If fine-tuning hurts, address it explicitly — reviewers will compare the numbers themselves.
+
+42. **High filtering rate contradicts scalability or coverage claims.** *(real ICLR 2026)*
+    GUIrilla deployed its crawler on 12,298 apps but the final dataset covered only 23 app genres — roughly 99% filtered out. Reviewer: "why nearly 99% of the applications are dropped? I am worried that such a high filtering rate will limit the scaling potential."
+    If your pipeline discards most of its input, you must justify the filtering criteria and address whether the remaining data is representative. A large-scale collection claim with a 1% yield is a contradiction.
+
+43. **Paper scope must match the venue — reviewers will question fit explicitly.** *(real ICLR 2026)*
+    PS-QNN (quantum neural network) paper: all experiments were combinatorial optimization problems with no ML component. Reviewer: "I would therefore ask the authors to provide clarification on the nomenclature and why they think that the paper even fits the scope of this conference."
+    If your paper is primarily from another field (quantum computing, operations research, control theory), make the ML connection explicit in the introduction. Reviewers will raise venue fit as a formal concern.
+
 39. **Tautological claims — results that hold by construction are not findings.** *(real ICLR 2026)*
     SWF Benchmark claimed "top models balance efficiency and fairness." Reviewer: "This is circular, since not doing so would mean they were not top models" — the multiplicative score selects for balance by definition.
     Before reporting a result, ask: does this follow necessarily from how I defined the metric or task? If yes, it is not a finding. Reviewers will catch it and use it to question whether the benchmark measures anything real.
