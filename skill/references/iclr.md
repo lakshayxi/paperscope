@@ -277,6 +277,26 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
     SRT (time series super-resolution) had inference time raised by 3 out of 4 reviewers independently: "computational complexity and inference speed are relatively high"; "does not discuss overall training or inference cost"; "is the computational complexity during inference reasonable?"
     For any generative model or multi-stage pipeline: always include an inference time table vs. baselines.
 
+48. **Under page limit is penalized — use the full page allocation.** *(real ICLR 2026)*
+    FINEdits image editing paper was under the ICLR page limit. Reviewer explicitly: "fill all 9 pages for ICLR."
+    ICLR has a page limit, not a page target — but consistently short papers signal incomplete work. Use the full allocation.
+
+49. **Baseline unfairness: your method uses a technique withheld from baselines.** *(real ICLR 2026)*
+    SpecExtend (speculative decoding) used FlashAttention internally but did not apply it to baseline methods — giving the paper's approach a latency advantage not given to competitors. Reviewer caught this directly.
+    If your method uses any component (efficient attention, mixed precision, quantization) that would also benefit baselines, apply it uniformly. Reviewers will attribute all gains to the component, not your contribution.
+
+50. **Title mismatch between PDF and submission system.** *(real ICLR 2026)*
+    Physics-informed MeshGraphNet: the PDF title differed from the OpenReview submission title. Seen in two papers in the same batch — reviewers notice and it reduces confidence in overall care and rigor.
+    Verify your PDF title, abstract, and author list exactly match what was submitted to the venue system before the deadline.
+
+51. **Benchmark with too few evaluation items cannot support reliability claims.** *(real ICLR 2026)*
+    PROBE benchmark had only 216 questions total. Reviewers: statistically insufficient to draw reliable conclusions about model capabilities across dimensions.
+    Single-digit hundreds of items for the whole benchmark is insufficient. As a rough guide, hundreds of items per capability dimension is the minimum — and include a saturation analysis if top models already score high.
+
+52. **Greedy decoding only (temperature=0) with no sampling variance.** *(real ICLR 2026)*
+    PROBE evaluated all models at temperature=0 with no sampling variance reported. For any stochastic model, greedy-only gives a single point estimate with no uncertainty — particularly problematic when margins between models are small.
+    Always run at least 3 seeds or sampling runs and report variance. Greedy-only is acceptable only if you argue it is standard for your specific task.
+
 ---
 
 ## 4. Hidden Criteria
