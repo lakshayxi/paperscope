@@ -313,6 +313,26 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
     PROBE evaluated all models at temperature=0 with no sampling variance reported. For any stochastic model, greedy-only gives a single point estimate with no uncertainty — particularly problematic when margins between models are small.
     Always run at least 3 seeds or sampling runs and report variance. Greedy-only is acceptable only if you argue it is standard for your specific task.
 
+53. **Benchmark oracle/ground truth construction must be fully documented.** *(real ICLR 2026)*
+    MODEL-BENCH scored 2,2,2,2. The ground truth TLA+ specs relied on GPT-4o plus manual fixes — but the paper gave no details on how many annotators, how long it took, or whether multiple people reviewed each spec. Reviewer: "Without these important details, it is very difficult to judge the quality of the benchmark set."
+    For any benchmark paper with a manual annotation or verification step: document the number of annotators, time cost, inter-annotator agreement, and whether any systematic quality check was run. Reviewers treat undocumented ground truth as untrustworthy ground truth.
+
+54. **New benchmark must argue novelty against the closest existing benchmarks by name.** *(real ICLR 2026)*
+    ITD (TTA benchmark) scored 2,4,2,4. Reviewers listed RoTTA, ImageNet-Vid, NOTE, TRIBE by name and asked: "How does ITD differ from these?" The paper didn't make this argument. MODEL-BENCH had the same problem — reviewers pointed out that existing model checker datasets (SPIN, TLA, UPPAAL) already had verified programs the authors could have used.
+    Before submitting a benchmark paper, identify the 3–5 closest existing benchmarks and write a paragraph per one arguing what evaluation your benchmark enables that they cannot. If you can't answer that question, the benchmark contribution is weak.
+
+55. **New evaluation metric or framework must show cases where it disagrees with the simple baseline.** *(real ICLR 2026)*
+    Probing Memes scored 2,6,6,2. The phemotypes tracked accuracy almost perfectly in Figure 7. Reviewer: "If the proposed phemotypes largely parallel accuracy, what additional insight do they provide? This contradicts the motivation that current approaches obscure fine-grained differences."
+    For any paper proposing a new evaluation metric, framework, or paradigm: show concrete examples where your metric gives different rankings or conclusions than accuracy/the existing baseline. If you can't find cases of disagreement, the metric is redundant. This is the primary empirical burden for evaluation framework papers.
+
+56. **Conceptual framework that renames existing concepts without enabling new analysis will be called out.** *(real ICLR 2026)*
+    Probing Memes introduced "memes," "phemotypes," and a "perception matrix" — three reviewers independently said "the core contributions would not be affected if the metaphor were removed." The relabeling added terminology without enabling analysis that wasn't already possible.
+    If your paper introduces a theoretical framework or metaphor, it must enable at least one analysis, decomposition, or insight that could not be expressed without it. Naming the same concept differently is not a contribution. Ask yourself: what can I prove, measure, or argue using this framework that I couldn't before?
+
+57. **Empirical study findings must distinguish novel from already-established results.** *(real ICLR 2026)*
+    Multilingual pretraining study scored 6,8,4,4. A 4-reviewer explicitly flagged: "The finding that the curse of multilinguality relates to model capacity has already been stated in the original XLM-R paper." The paper presented this as a finding without positioning it against prior consensus.
+    For empirical studies with multiple findings: each finding must be labeled as (a) contradicting prior work, (b) confirming under new conditions (larger scale, new setting), or (c) genuinely new. Don't present confirmation of established results as novel discoveries — reviewers will flag it. If your contribution is confirmation at a larger scale or in a new domain, say that explicitly and argue why it matters.
+
 ---
 
 ## 4. Hidden Criteria
