@@ -345,9 +345,37 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
     Membership Decoding paper scored 6,4,4,2. Table 2 had "most positions blank." Reviewer: "these missing results seriously puts into question the validity of the results of this study." Also: a HARD setting mentioned in the paper had no results anywhere.
     Blank entries in a results table signal either the method failed in those conditions or the experiments weren't run — both trigger reviewer distrust. Either fill them in, explain in the caption why entries are absent (e.g., "method not applicable in this setting"), or remove the conditions from the table. A results table with unexplained gaps is treated as evidence of cherry-picking.
 
+61. **Unfair supervision comparison: your method uses annotations that baselines explicitly avoid.** *(real ICLR 2026)*
+    ODIS (object-level self-distillation) used ground-truth bounding boxes during training and compared against DINO/iBOT, which require no annotations at all. Confidence-5 reviewer: "the comparisons included in the paper are not fair at all." Adding any form of supervision — bounding boxes, class labels, pseudo-labels — creates an apples-to-oranges comparison with self-supervised baselines.
+    If your method requires any additional annotations (bounding boxes, weak labels, object masks), compare against other weakly-supervised methods that also use annotations, not purely unsupervised ones. If you must compare to unsupervised baselines, acknowledge and quantify the annotation cost explicitly.
+
+62. **Baseline re-implemented below its published performance = unfair comparison.** *(real ICLR 2026)*
+    BayesShift included only one EDG baseline (MMD-LSAE) and reported its performance "suspiciously low compared to its original publication." Reviewer flagged this as undermining the fairness of the proposed method's advantage.
+    When you re-implement a baseline, report numbers that match or exceed the original paper's reported results. If you can't reproduce the original numbers, explain why (different setup, compute budget) and use the original paper's numbers as the reference. Mysteriously low baseline results trigger reviewer suspicion that the comparison is tilted.
+
+63. **Observed pattern consistent with your mechanism ≠ evidence for your mechanism.** *(real ICLR 2026)*
+    BayesBench (4,4,4,2) argued LLMs show "Bayesian computation" based on a regression-toward-mean effect. Three reviewers independently pointed out: simple heuristics like anchoring to the session mean produce identical patterns. The paper never tested or ruled out non-Bayesian alternatives.
+    For any mechanistic or interpretability claim — "this model uses Bayesian inference," "this component performs attention routing," "this representation encodes X" — you must: (a) identify simpler alternative mechanisms that produce the same observable pattern, and (b) design experiments that distinguish between your mechanism and those alternatives. Showing a pattern is consistent with your hypothesis is not the same as demonstrating your hypothesis.
+
+64. **Human subjects studies require an IRB/ethics statement.** *(real ICLR 2026)*
+    BayesBench involved human psychophysics participants. Reviewer: "Human subject studies require an ethics statement. Was this work approved by an Institutional Review Board? I may have missed something but I did not find any ethics statement in the current manuscript."
+    Any paper involving human participants — including online studies, crowdsourced annotation, user evaluations, psychophysics — must include an ethics/IRB statement. Its absence is a reviewable defect. Add it to the paper, not just the appendix.
+
+65. **Method name collision with prior work = novelty flag.** *(real ICLR 2026)*
+    DRO paper (4,2,2,2): Richemond et al. (2024) already published a method also named "Direct Reward Optimization (DRO)" based on the same RLHF derivation — not cited and not compared to. Confidence-5 reviewer raised this as the primary novelty concern: without clearly differentiating from the identically-named prior work, it is impossible to assess what is new.
+    Before submitting, search for existing methods with the same name or acronym. If one exists using the same formulation, it must be cited, compared to, and the delta explicitly explained. Submitting without this looks like an oversight or a priority claim issue.
+
+66. **Applied paper must report domain-standard metrics, not just ML accuracy metrics.** *(real ICLR 2026)*
+    Quantum-inspired finance paper (4,4,2) reported classification accuracy and "win rate." Reviewer: "without portfolio backtest metrics (IC, Rank IC, Sharpe ratio), it is unclear whether the accuracy uplift converts into practical use."
+    When applying ML to a domain with established evaluation conventions — finance (IC, Sharpe), clinical AI (AUC-ROC, sensitivity/specificity), drug discovery (binding affinity, synthesizability), robotics (task success rate, contact force) — you must report those domain metrics alongside ML metrics. Showing ML accuracy in isolation signals the authors don't know what practitioners actually measure.
+
 60. **If your comparison baseline evaluated on architecture X, you must also evaluate on X.** *(real ICLR 2026)*
     StoRM (mixup augmentation) compared against AdAutoMix and AutoMix, both of which evaluated on ViT-based architectures (DeiT-Small, Swin, ConvNeXt). StoRM only used CNNs. Reviewer: "The experiments lack generalization. The authors fail to demonstrate the performance of ViT-based methods."
     When you compare against a paper, you inherit their evaluation scope. If your baselines evaluated on architecture families, model sizes, or tasks that you omit, reviewers will ask why. Either include them or explicitly argue why the omitted setting is out of scope.
+
+67. **Core user-facing capability must be demonstrated directly, not just via downstream metrics.** *(real ICLR 2026)*
+    IPE (natural language preference steering) claimed its key contribution was steering model behavior via natural language. But the paper showed no examples of natural language specifications anywhere, no user study, and evaluated exclusively on standard long-tail accuracy metrics that don't test the steering capability at all. Reviewer: "there are no examples of the natural language specifications in the paper, making it very hard to understand what the method is actually trying to achieve."
+    When the central contribution is an interactive, user-facing, or controllable capability — natural language control, dialogue agents, explanation systems, preference interfaces — you must demonstrate that capability directly: examples, user study, or interactive evaluation. Downstream accuracy metrics alone cannot validate "users can control this with language." Without demonstration, reviewers assume the capability works only in the conditions you already tested.
 
 ---
 
