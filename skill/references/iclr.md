@@ -253,6 +253,22 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
     PS-QNN (quantum neural network) paper: all experiments were combinatorial optimization problems with no ML component. Reviewer: "I would therefore ask the authors to provide clarification on the nomenclature and why they think that the paper even fits the scope of this conference."
     If your paper is primarily from another field (quantum computing, operations research, control theory), make the ML connection explicit in the introduction. Reviewers will raise venue fit as a formal concern.
 
+44. **Benchmark that doesn't require its claimed modality = fundamental validity problem.** *(real ICLR 2026)*
+    MA-EgoQA claimed to test multi-agent visual reasoning, but text+video EgoMAS scored only 0.4% higher than text-only — because QA pairs were generated from captions and transcripts. Reviewer: "The paper claims multi-agent reasoning but the task is effectively text retrieval."
+    For any multimodal or multi-agent benchmark: add a modality ablation (text-only, vision-only, etc.) and report it prominently. If removing the key modality doesn't hurt performance, the benchmark isn't testing what it claims.
+
+45. **LLMs evaluated on tasks where classical ML clearly dominates = wrong research framing.** *(real ICLR 2026)*
+    HealthSLM-Bench evaluated SLMs on classification and regression tasks over wearable sensor data. Reviewer: "Normal ML prediction models can work much better, efficient, and accurate. There is no need to involve LLMs."
+    If your task is a standard supervised prediction problem (classification, regression) with tabular or time-series input, you must compare against classical ML baselines (XGBoost, LSTM, etc.) and explain why LLMs are the right tool. Skipping this comparison signals the authors didn't ask the right question.
+
+46. **Modifying the test set makes results incomparable to all prior work.** *(real ICLR 2026)*
+    SMMT (speech-guided MT) removed overlapping portions from the FLORES devtest set. Reviewer: "You should never modify a test set! This makes it impossible to compare results. Which version of Flores was used? Did you recalculate the scores for the other systems?"
+    Test sets are fixed contracts. Removing samples — even for legitimate reasons (overlap with training data) — requires reporting on the original set too, or results cannot be compared to any prior work. This is treated as a critical experimental flaw.
+
+47. **Key experimental conditions buried in appendix = hidden advantage.** *(real ICLR 2026)*
+    FSCIL paper used pretrained ImageNet features on CUB-200 but disclosed this only in the appendix. Reviewer: "This should be clarified in the main paper. The paper should also compare against simpler works that use pre-trained ImageNet features."
+    If a design choice meaningfully affects performance — pretrained features, additional data, auxiliary supervision — it belongs in the main paper. Hiding it in the appendix looks like concealment and triggers reviewer distrust.
+
 39. **Tautological claims — results that hold by construction are not findings.** *(real ICLR 2026)*
     SWF Benchmark claimed "top models balance efficiency and fairness." Reviewer: "This is circular, since not doing so would mean they were not top models" — the multiplicative score selects for balance by definition.
     Before reporting a result, ask: does this follow necessarily from how I defined the metric or task? If yes, it is not a finding. Reviewers will catch it and use it to question whether the benchmark measures anything real.
