@@ -221,6 +221,26 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
     SEAL showed accuracy results for its method across vision datasets but provided no accuracy numbers for the baseline defenses it compared against. "Where is the accuracy results for these baselines?"
     A comparison table with only one row is not a comparison. Every metric you report for your method must have corresponding numbers for every baseline.
 
+35. **Benchmark metric with no normative grounding = "is this actually a benchmark?"** *(real ICLR 2026)*
+    SWF Benchmark (LLM allocators) scored 4,2,4,4: "There isn't a clear normative argument that higher scores on this benchmark are preferable." The metric (Gini × ROI) had a theoretical maximum determined by the model population, not by any principled human value.
+    For benchmark papers: you must argue explicitly why higher scores are better. A metric that optimizes an arbitrary combination without grounding it in human preferences or theory will be challenged as not being a benchmark at all.
+
+36. **Random baseline outperforming most models = task design flaw.** *(real ICLR 2026)*
+    "The random strategy performs better in SWF than most models, potentially indicating that this task isn't well suited to LMs."
+    If random or trivial baselines beat most of your evaluated models, reviewers conclude the task is miscalibrated — either too hard for current models, or structured in a way that rewards random behavior. Always include a random baseline and address it explicitly if it performs unexpectedly well.
+
+37. **Methodology-experiment dimensional mismatch.** *(real ICLR 2026)*
+    SI-SR (symbolic regression) defined its main formulation for a single spatial variable x, but ran experiments on 2D reaction-diffusion systems with both x and y. "This mismatch raises questions about how the framework extends to higher-dimensional inputs."
+    Every dimension, variable type, or structural assumption in your method section must be consistent with your experiments. Reviewers will find the mismatch and interpret it as an unresolved limitation.
+
+38. **Evaluation confound: labeling which response is "better" in the judge prompt biases the judge.** *(real ICLR 2026)*
+    JUSSA (steering for LLM judges) explicitly labeled the steered output as "more honest alternative" in the judge prompt. Reviewer: "This framing undermines the central claim that JUSSA's improvements arise from genuine model-level contrast rather than prompt wording."
+    For papers that use LLM judges: the judge prompt must be neutral. If you tell the judge which response is supposed to be better, the AUROC gain is measuring label bias, not method effectiveness.
+
+39. **Tautological claims — results that hold by construction are not findings.** *(real ICLR 2026)*
+    SWF Benchmark claimed "top models balance efficiency and fairness." Reviewer: "This is circular, since not doing so would mean they were not top models" — the multiplicative score selects for balance by definition.
+    Before reporting a result, ask: does this follow necessarily from how I defined the metric or task? If yes, it is not a finding. Reviewers will catch it and use it to question whether the benchmark measures anything real.
+
 30. **Missing inference time and compute cost — near-universal reviewer expectation.** *(real ICLR 2026)*
     SRT (time series super-resolution) had inference time raised by 3 out of 4 reviewers independently: "computational complexity and inference speed are relatively high"; "does not discuss overall training or inference cost"; "is the computational complexity during inference reasonable?"
     For any generative model or multi-stage pipeline: always include an inference time table vs. baselines.
