@@ -205,6 +205,22 @@ A score of 8 from a confidence-2 reviewer carries less weight than a score of 6 
     KTGen (tabular generation) used KL divergence, Wasserstein per column, and KS as fidelity metrics — the same quantities it was trained to minimize. "The main fidelity metrics directly correspond to the optimized objectives, naturally favoring KTGen."
     Always report at least one held-out metric not in your training loss. If all your metrics are your objectives, reviewers will call it circular.
 
+31. **Taxonomy or framework paper must show what the framework enables, not just define it.** *(real ICLR 2026)*
+    RL memory taxonomy paper scored 4,4,4,6: "This paper seems to have achieved only the first part." Reviewers expected either (a) a new benchmark built on the taxonomy or (b) a comparative analysis of existing methods classified under it. The definitions alone scored 4.
+    If your contribution is a unifying taxonomy or formal framework, the second half of the paper must demonstrate what new analysis, insight, or evaluation it makes possible. Definitions without downstream payoff = incomplete contribution.
+
+32. **Security papers without formal guarantees are treated as empirical-only and penalized.** *(real ICLR 2026)*
+    SEAL (split learning privacy) scored 2,2,2,2 partly because: "There is no formal security guarantee provided in the paper."
+    For security/privacy papers: empirical defense results alone are not sufficient at ICLR. Reviewers expect either a formal privacy guarantee (differential privacy, information-theoretic bound, etc.) or an explicit argument for why one cannot be provided. Without it, the contribution is treated as an engineering solution, not a research one.
+
+33. **Self-contradiction in the threat model or problem setup is caught immediately.** *(real ICLR 2026)*
+    SEAL claimed passive adversaries in §2.2 but described an active adversary in §3. Reviewer: "This is a self-contradiction."
+    Reviewers read the threat model and problem setup carefully and check it against every subsequent section. Any inconsistency signals the paper wasn't read end-to-end before submission.
+
+34. **Showing only your method's numbers without baseline numbers = incomplete evaluation.** *(real ICLR 2026)*
+    SEAL showed accuracy results for its method across vision datasets but provided no accuracy numbers for the baseline defenses it compared against. "Where is the accuracy results for these baselines?"
+    A comparison table with only one row is not a comparison. Every metric you report for your method must have corresponding numbers for every baseline.
+
 30. **Missing inference time and compute cost — near-universal reviewer expectation.** *(real ICLR 2026)*
     SRT (time series super-resolution) had inference time raised by 3 out of 4 reviewers independently: "computational complexity and inference speed are relatively high"; "does not discuss overall training or inference cost"; "is the computational complexity during inference reasonable?"
     For any generative model or multi-stage pipeline: always include an inference time table vs. baselines.
