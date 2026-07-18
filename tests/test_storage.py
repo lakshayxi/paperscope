@@ -50,6 +50,24 @@ def test_public_index_strips_full_text_to_excerpt(tmp_path):
     assert review.text["length"] == len(record.reviews[0].text)
 
 
+def test_public_index_round_trip_twice_is_idempotent(tmp_path):
+    """Regression test: CI restores the public index as its working corpus each run (the
+    full-text tier is never persisted across runs), so re-saving already-excerpted
+    records back to the public index must not crash or double-excerpt them.
+    """
+    path = tmp_path / "iclr.jsonl"
+    record = _sample_record("f1")
+    save_public_index(path, {"f1": record}, excerpt_max_chars=20)
+
+    loaded_once = load_corpus(path)
+    save_public_index(path, loaded_once, excerpt_max_chars=20)  # simulates a second CI run
+
+    loaded_twice = load_corpus(path)
+    review = loaded_twice["f1"].reviews[0]
+    assert review.text["length"] == len(record.reviews[0].text)
+    assert review.text["excerpt"] == loaded_once["f1"].reviews[0].text["excerpt"]
+
+
 def test_to_public_dict_keeps_numeric_fields_in_full():
     record = _sample_record("f1")
     public = to_public_dict(record, excerpt_max_chars=10)

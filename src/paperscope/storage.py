@@ -85,7 +85,13 @@ def save_full_corpus(path: Path, records: dict[str, ForumRecord]) -> None:
     atomic_write_text(path, "\n".join(lines) + ("\n" if lines else ""))
 
 
-def _excerpt(text: str, max_chars: int) -> dict:
+def _excerpt(text, max_chars: int) -> dict:
+    """Idempotent: if `text` is already an excerpt dict (round-tripped from a previously
+    saved public index -- e.g. a CI run restoring prior state as its working corpus),
+    pass it through unchanged rather than trying to re-excerpt a dict as if it were text.
+    """
+    if isinstance(text, dict) and {"excerpt", "length", "hash"} <= set(text):
+        return text
     text = text or ""
     return {
         "excerpt": text[:max_chars],

@@ -1,0 +1,1004 @@
+[
+  {
+    "api_version": "v2",
+    "decision": {
+      "category": "",
+      "normalized": "unknown",
+      "note_id": "CdKWkUjYCW",
+      "raw_text": ""
+    },
+    "fetched_at": 1784415338.962508,
+    "forum_id": "h7qdCvhMdb",
+    "paper": {
+      "abstract": "Scaling inference methods such as Markov chain Monte Carlo to high-dimensional models remains a central challenge in Bayesian deep learning. A promising recent proposal, microcanonical Langevin Monte Carlo, has shown state-of-the-art performance across a wide range of problems. However, its reliance on full-dataset gradients makes it prohibitively expensive for large-scale problems. This paper addresses a fundamental question: Can microcanonical dynamics effectively leverage mini-batch gradient noise? We provide the first systematic study of this problem, revealing two critical failure modes: a limitation due to anisotropic gradient noise and numerical instabilities in complex high-dimensional posteriors. We resolve both issues by proposing a principled gradient noise preconditioning scheme and developing a novel, energy-variance-based adaptive tuner that automates step size selection and informs dynamical numerical guardrails. The resulting algorithm is a robust and scalable microcanonical Monte Carlo sampler that consistently outperforms strong stochastic gradient MCMC baselines on challenging high-dimensional inference tasks like Bayesian neural networks. Combined with recent ensemble techniques, our work unlocks a new class of stochastic microcanonical Langevin ensemble (SMILE) samplers for large-scale Bayesian inference.",
+      "authors": "Emanuel Sommer, Kangning Diao, Jakob Robnik, Uros Seljak, David R\u00fcgamer",
+      "keywords": "Microcanonical Langevin, Sampling, Bayesian Deep Learning",
+      "title": "Can Microcanonical Langevin Dynamics Leverage Mini-Batch Gradient Noise?"
+    },
+    "paperscope_version": "0.1.0",
+    "refresh": {
+      "last_checked_at": 1784415338.9625332,
+      "next_refresh_at": 1784501738.9625332,
+      "refresh_attempts": 0,
+      "status": "active",
+      "terminal_reason": null
+    },
+    "responses": [
+      {
+        "content_hash": "97e624ae37d29cf9",
+        "kind": "rebuttal",
+        "modified_at": 1764540412541,
+        "note_id": "T3WaGrNwBV",
+        "text": {
+          "excerpt": "Dear Area Chair and Reviewers,\n\nAs the active discussion phase had to be closed due to the privacy-leak, we would like to provide a concise summary of our rebuttal to assist the Area Chair in their final assessment.\n\nFirst, we sincerely **thank all reviewers** for their construct",
+          "hash": "28ba0fb579b20386",
+          "length": 3962
+        }
+      },
+      {
+        "content_hash": "932af54f88d872b8",
+        "kind": "rebuttal",
+        "modified_at": 1764317353960,
+        "note_id": "L3waUksCkp",
+        "text": {
+          "excerpt": "I appreciate these helpful additional comments. I realized my previous remark was somewhat awkwardly phrased. While I certainly acknowledge the theoretical contributions concerning the SG- extension, my comment was meant only to suggest that the resulting practical algorithm stil",
+          "hash": "5b14bbd34ee8af3b",
+          "length": 575
+        }
+      },
+      {
+        "content_hash": "a67a9e6999cbf571",
+        "kind": "rebuttal",
+        "modified_at": 1764230892390,
+        "note_id": "cJnFdZkKbu",
+        "text": {
+          "excerpt": "Dear Reviewer Z5uF,\n\nThank you very much for your continued engagement with our work and for raising your score. We are glad to hear that the additional experiments and our responses regarding the validation have strengthened your assessment of the paper.\n\nWhile we appreciate you",
+          "hash": "c30cd7b71ba01709",
+          "length": 2667
+        }
+      },
+      {
+        "content_hash": "b7f7bb3b0af06262",
+        "kind": "rebuttal",
+        "modified_at": 1764144698384,
+        "note_id": "e0GvcEV2oA",
+        "text": {
+          "excerpt": "Thank you for the authors' efforts during the rebuttal period. As we are now entering the final week, I wanted to provide an update on my assessment at this point. Please note that this is not intended to close the discussion; consider this a status report for the authors' peace ",
+          "hash": "d6e3e40a710111c7",
+          "length": 1340
+        }
+      },
+      {
+        "content_hash": "304faaa80e32091a",
+        "kind": "rebuttal",
+        "modified_at": 1763998970727,
+        "note_id": "8ojmLdpizr",
+        "text": {
+          "excerpt": "Dear Reviewers,\n\nAs we move into the last third of the discussion phase, we have uploaded a revised manuscript and updated the codebase. To rigorously benchmark our method against strong adaptive samplers, we have added Cyclical SGLD comparisons and validated scalability as well ",
+          "hash": "3eaf308a1e2f1fe6",
+          "length": 915
+        }
+      },
+      {
+        "content_hash": "bfa4431a392f8cc5",
+        "kind": "rebuttal",
+        "modified_at": 1763723935069,
+        "note_id": "EO9Y0uJDjL",
+        "text": {
+          "excerpt": "Dear Reviewer Z5uF,\n\nThank you for the rapid follow-up and the engagement with our rebuttal.\n\nYes, your interpretation is correct. The limitation of the diagonal approximation is likely a major reason for the encountered numerical instability at scale. That said, it is worth noti",
+          "hash": "eac54ecf791e5708",
+          "length": 834
+        }
+      },
+      {
+        "content_hash": "d37bbc3a00c8ec12",
+        "kind": "rebuttal",
+        "modified_at": 1763707294458,
+        "note_id": "ypH834RvIy",
+        "text": {
+          "excerpt": ">> the guardrail-induced forced reversion could potentially disrupt proper posterior sampling.\n>\n> This is a sharp observation, and we appreciate the comment. Our guardrail acts as a cost-efficient replacement for a Metropolis-Hastings correction step. While it is not exactly lik",
+          "hash": "871594c29518b403",
+          "length": 1535
+        }
+      },
+      {
+        "content_hash": "f692863953d5d5d2",
+        "kind": "rebuttal",
+        "modified_at": 1763453379676,
+        "note_id": "9GlbqjKUe7",
+        "text": {
+          "excerpt": "> How does the proposed algorithm behave for multimodal distributions? For example, a 10-dimensional mixture Gaussian distribution with well separated modes.\n\nWe thank the reviewer for this great suggestion. To explicitly address this, we have added a new experiment on a 10-dimen",
+          "hash": "83bd064db987315f",
+          "length": 2271
+        }
+      },
+      {
+        "content_hash": "169a635b6af5c203",
+        "kind": "rebuttal",
+        "modified_at": 1763451883214,
+        "note_id": "Si2Uj1Po9P",
+        "text": {
+          "excerpt": "Dear reviewer hsV6,\n\nThank you for your positive feedback. We appreciate your comments and address each point below.\n\n> A key limitation of the paper is that the proposed algorithm currently lacks formal convergence guarantees. [...] Any theoretical justifications for the converg",
+          "hash": "aee39febcc91d026",
+          "length": 3252
+        }
+      },
+      {
+        "content_hash": "089277cb2ff6dbf6",
+        "kind": "rebuttal",
+        "modified_at": 1763453357511,
+        "note_id": "nskSuIyzrf",
+        "text": {
+          "excerpt": "**Questions**\n\n> Could you clarify how many Monte Carlo samples were used for the values reported in the tables? Specifically, what are the K and S settings?\n\nWe thank the reviewer for this question. All details regarding the number of Monte Carlo samples ($K$ and $S$ settings) a",
+          "hash": "067e33295dbb891b",
+          "length": 3240
+        }
+      },
+      {
+        "content_hash": "224c2c91a26d9096",
+        "kind": "rebuttal",
+        "modified_at": 1763453331498,
+        "note_id": "2sJl7lOIWv",
+        "text": {
+          "excerpt": "**Weakness 3**\n\n> more direct empirical comparison [to cSGLD] appears to be missing.\n\nWe thank the reviewer for highlighting this. As noted in our response to Reviewer z1tA, we agree that a direct empirical comparison to cyclical SGLD is important for properly situating our metho",
+          "hash": "cbd93d030e83743a",
+          "length": 4218
+        }
+      },
+      {
+        "content_hash": "05522e38532db618",
+        "kind": "rebuttal",
+        "modified_at": 1763453314081,
+        "note_id": "CrxUMJUlCL",
+        "text": {
+          "excerpt": "Dear reviewer Z5uF,\n\nThank you for your thorough and constructive feedback. We appreciate your comments and address each point below.\n\n**Weakness 1**\n\n> the guardrail-induced forced reversion could potentially disrupt proper posterior sampling.\n\nThis is a sharp observation, and w",
+          "hash": "0762c488124fdfde",
+          "length": 3186
+        }
+      },
+      {
+        "content_hash": "15234d43c6d75a06",
+        "kind": "rebuttal",
+        "modified_at": 1763453284567,
+        "note_id": "KAqThZY2C8",
+        "text": {
+          "excerpt": "**Questions**\n\n> Line 119: This equation approximates the numerical error, as a change in total energy per step, but it is not clear if this error is big or small, or how big issues these errors can cause.\n\n\nIndeed, we have not provided all of the details in this statement. The n",
+          "hash": "cad6551a088b4506",
+          "length": 3612
+        }
+      },
+      {
+        "content_hash": "b63a5945abe50b5a",
+        "kind": "rebuttal",
+        "modified_at": 1763451317377,
+        "note_id": "HkW2pte0ih",
+        "text": {
+          "excerpt": "> \u201cthe second-order Minimal-Norm integrator\u201d is used to numerically solve (3), but the details are missing, and I wish these details were at least in the Appendix.\n\nWhile the integrator is an important design choice, it is well established in the literature and was hence not expl",
+          "hash": "94e27ac01394a57b",
+          "length": 3992
+        }
+      },
+      {
+        "content_hash": "93b69bab64b822cf",
+        "kind": "rebuttal",
+        "modified_at": 1763453258134,
+        "note_id": "nt4Hd4sbbB",
+        "text": {
+          "excerpt": "Dear reviewer Mm8M,\n\nThank you for your thoughtful and constructive feedback. We appreciate your detailed comments and will address each point below.\n\n**Weaknesses**\n\n> The first three pages consist mainly of the introduction and discussion of related work. While this section is ",
+          "hash": "586451f188728ebe",
+          "length": 3831
+        }
+      },
+      {
+        "content_hash": "1de12d1e2d1842be",
+        "kind": "rebuttal",
+        "modified_at": 1763453228337,
+        "note_id": "FLaoOO8ygk",
+        "text": {
+          "excerpt": "**Weakness 2**\n \n> an algorithm [...] should be evaluated in a single-chain setting\n\nWe appreciate this important observation. As the reviewer correctly noted, understanding mixing behavior requires single-chain evaluation. We would like to highlight that **single-chain results a",
+          "hash": "b0c4f98f40b19790",
+          "length": 3849
+        }
+      },
+      {
+        "content_hash": "d0e1b694afb32c5a",
+        "kind": "rebuttal",
+        "modified_at": 1763450760396,
+        "note_id": "FWgnDxcJuV",
+        "text": {
+          "excerpt": "We further extended our evaluation to a different architecture and dataset by training a Vision Transformer (patch size 16, hidden dimension 384, depth 12, 8 heads, 22M parameters) on Imagenette. These results on this even larger scale BNN benchmark underscore the competitiveness",
+          "hash": "ed969f85ffb97164",
+          "length": 4056
+        }
+      },
+      {
+        "content_hash": "eab6bedfa32f1606",
+        "kind": "rebuttal",
+        "modified_at": 1763453181997,
+        "note_id": "KWx4bVcCVS",
+        "text": {
+          "excerpt": "Dear reviewer z1tA,\n\nThank you for your thoughtful and constructive feedback. We appreciate your detailed comments and will address each point below.\n\n**Weakness 1**\n\n> Although the paper benchmarks against strong baselines such as scale-adapted SGHMC, it omits comparison with se",
+          "hash": "5fb0695c637cb977",
+          "length": 2629
+        }
+      }
+    ],
+    "retrieval_errors": [],
+    "reviews": [
+      {
+        "confidence": {
+          "label": "",
+          "raw": "3",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 3.0
+        },
+        "content_hash": "a9c2d85f77d784e0",
+        "final_rating": null,
+        "initial_rating": {
+          "label": "",
+          "raw": "6",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 6.0
+        },
+        "invitation": "['ICLR.cc/2026/Conference/Submission1/-/Official_Review', 'ICLR.cc/2026/Conference/-/Edit']",
+        "modified_at": 1762915433788,
+        "note_id": "xk6sXc1N1i",
+        "questions": {
+          "excerpt": "1. How sensitive is performance to these parameters in practice when not tuned extensively?\n2. Could the authors report or estimate the per-step computational overhead of SMILE/pSMILE relative to SGHMC, especially regarding the adaptive tuning and energy estimation steps?",
+          "hash": "39eb3c81346e4dca",
+          "length": 272
+        },
+        "strengths": {
+          "excerpt": "The techniques of the paper jointly resolve anisotropic noise bias and numerical instability, enabling scalable and robust Bayesian inference. The proposed SMILE and pSMILE methods show theoretical grounding and consistent empirical gains over SGHMC across Bayesian neural network",
+          "hash": "a4da2e526396d0dd",
+          "length": 333
+        },
+        "summary": {
+          "excerpt": "This paper explores how microcanonical Langevin dynamics, an MCMC method that evolves samples on constant-energy surfaces, can be scaled to large-scale Bayesian inference using mini-batch gradients. The mini-batch version of microcanonical Langevin dynamics, called stochastic mic",
+          "hash": "b1d185ad603bdaf2",
+          "length": 692
+        },
+        "text": {
+          "excerpt": "",
+          "hash": "e3b0c44298fc1c14",
+          "length": 0
+        },
+        "weaknesses": {
+          "excerpt": "1. Although the paper benchmarks against strong baselines such as scale-adapted SGHMC, it omits comparison with several strong adaptive SGMCMC methods, e.g., SGFS (Ahn et al., 2012), pSGLD (Li et al., 2016), MSGLD (Kim et al., 2020), cyclical SGMCMC (Zhang et al., 2020), MAMBA (C",
+          "hash": "60285ef8e3ebc0ca",
+          "length": 1199
+        }
+      },
+      {
+        "confidence": {
+          "label": "",
+          "raw": "2",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 2.0
+        },
+        "content_hash": "896040df88374216",
+        "final_rating": null,
+        "initial_rating": {
+          "label": "",
+          "raw": "4",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 4.0
+        },
+        "invitation": "['ICLR.cc/2026/Conference/Submission1/-/Official_Review', 'ICLR.cc/2026/Conference/-/Edit']",
+        "modified_at": 1762915433936,
+        "note_id": "2LrfLHwXAQ",
+        "questions": {
+          "excerpt": "Line 119: This equation approximates the numerical error, as a change in total energy per step, but it is not clear if this error is big or small, or how big issues these errors can cause.\n\nLine 206: Since V(theta) is not fully estimated, only its diagonal elements are estimated.",
+          "hash": "d9be35d2c92d7bcb",
+          "length": 482
+        },
+        "strengths": {
+          "excerpt": "The paper addresses an important problem.\n\n\u2022\tThe paper demonstrates that the na\u00efve version of MCLMC, which uses stochastic gradients instead of full-batch gradients, fails to achieve good results. This variant is referred to as SMILE-na\u00efve.\n\n\u2022\tTo address this issue, the authors p",
+          "hash": "f9c1f6e88101d6cc",
+          "length": 1313
+        },
+        "summary": {
+          "excerpt": "Scaling inference methods to high-dimensional models remains a major challenge in Bayesian deep learning.\nMicrocanonical Langevin Monte Carlo (MCLMC) is a promising approach; however, it requires computing gradients over the entire dataset, which can be computationally expensive.",
+          "hash": "29334f21c01ffa36",
+          "length": 626
+        },
+        "text": {
+          "excerpt": "",
+          "hash": "e3b0c44298fc1c14",
+          "length": 0
+        },
+        "weaknesses": {
+          "excerpt": "\u2022\tThe first three pages consist mainly of the introduction and discussion of related work. While this section is useful and well written, unfortunately, there isn\u2019t enough space left in the main paper to adequately present the details of the new contributions.\n\n\u2022\tPerhaps because ",
+          "hash": "318e2c712fd0aada",
+          "length": 1818
+        }
+      },
+      {
+        "confidence": {
+          "label": "",
+          "raw": "3",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 3.0
+        },
+        "content_hash": "5be0cfd294b433fb",
+        "final_rating": null,
+        "initial_rating": {
+          "label": "",
+          "raw": "4",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 4.0
+        },
+        "invitation": "['ICLR.cc/2026/Conference/Submission1/-/Official_Review', 'ICLR.cc/2026/Conference/-/Edit']",
+        "modified_at": 1764358804839,
+        "note_id": "1075QTaHbc",
+        "questions": {
+          "excerpt": "- Could you clarify how many Monte Carlo samples were used for the values reported in the tables? Specifically, what are the K and S settings?\n\n- In Table 3, the performance of IVON seems quite low. Did you perform proper hyperparameter tuning? From my experience running IVON on ",
+          "hash": "3fbe96fd2b11bcb2",
+          "length": 808
+        },
+        "strengths": {
+          "excerpt": "- Just as methods such as SGLD and pSGLD were developed from the LMC, it seems natural and well-motivated that a similar line of research would emerge for the MCLMC as well.\n\n- Section 3 is easy to follow, and the overall procedure seems sound. The Gaussian assumption for gradien",
+          "hash": "5889c9fb39709a7b",
+          "length": 492
+        },
+        "summary": {
+          "excerpt": "This work considers a stochastic gradient variant of microcanonical Langevin Monte Carlo, proposing a preconditioning method to account for anisotropic mini-batch noise and an adaptive tuning scheme to mitigate sensitivity to the step size.",
+          "hash": "15495bf3796fd821",
+          "length": 240
+        },
+        "text": {
+          "excerpt": "",
+          "hash": "e3b0c44298fc1c14",
+          "length": 0
+        },
+        "weaknesses": {
+          "excerpt": "- In essence, the preconditioning introduced in Section 3 aims to ensure that the stationary distribution matches the target posterior under anisotropic mini-batch noise. However, if we proceed as described in Section 4, it seems that the stationary distribution may no longer coi",
+          "hash": "d171f7fe8b2a6ad1",
+          "length": 1002
+        }
+      },
+      {
+        "confidence": {
+          "label": "",
+          "raw": "4",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 4.0
+        },
+        "content_hash": "a0ef201793a68e97",
+        "final_rating": null,
+        "initial_rating": {
+          "label": "",
+          "raw": "6",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 6.0
+        },
+        "invitation": "['ICLR.cc/2026/Conference/Submission1/-/Official_Review', 'ICLR.cc/2026/Conference/-/Edit']",
+        "modified_at": 1762915434229,
+        "note_id": "UJAQJEJkpR",
+        "questions": {
+          "excerpt": "1. Algorithm 1: How is the INTEGRATORSTEP implemented? Please detail it. \n\n2. How does the proposed algorithm behave for multimodal distributions?  For example, a 10-dimensional mixture Gaussian distribution with well separated modes. \n\n3. Any theoretical justifications for the c",
+          "hash": "4859196c439afb0d",
+          "length": 317
+        },
+        "strengths": {
+          "excerpt": "The paper proposes a minibatch microcanonical Langevin sampler, which is robust and scalable,  with promising numerical experiments.",
+          "hash": "ca3f6902dd747f4e",
+          "length": 132
+        },
+        "summary": {
+          "excerpt": "This paper studies the performance of microcanonical Langevin dynamics, leading to a robust and scalable minibatch microcanonical Monte Carlo sampler.",
+          "hash": "8a49667272ddd793",
+          "length": 150
+        },
+        "text": {
+          "excerpt": "",
+          "hash": "e3b0c44298fc1c14",
+          "length": 0
+        },
+        "weaknesses": {
+          "excerpt": "A key limitation of the paper is that the proposed algorithm currently lacks formal convergence guarantees.",
+          "hash": "6c1ecf681fa33334",
+          "length": 107
+        }
+      }
+    ],
+    "sampling_method": "acquisition",
+    "sampling_seed": 42,
+    "schema_version": 1,
+    "url": "https://openreview.net/forum?id=h7qdCvhMdb",
+    "venue_family": "iclr",
+    "venue_id": "ICLR.cc/2026/Conference",
+    "venue_year": 2026
+  },
+  {
+    "api_version": "v2",
+    "decision": {
+      "category": "",
+      "normalized": "unknown",
+      "note_id": "w6WkyxJQvL",
+      "raw_text": ""
+    },
+    "fetched_at": 1784415339.301072,
+    "forum_id": "7QjQ1mpNMX",
+    "paper": {
+      "abstract": "Large-scale pretrained models are widely leveraged as foundations for learning new specialized tasks via fine-tuning, with the goal of maintaining the general performance of the model while allowing it to gain new skills. A valuable goal for all such models is robustness: the ability to perform well on out-of-distribution (OOD) tasks. We assess whether fine-tuning preserves the overall robustness of the pretrained model, and observed that models pretrained on large datasets exhibited strong catastrophic forgetting and loss of OOD generalization. To systematically assess robustness preservation in fine-tuned models, we propose the Robustness Inheritance Benchmark (ImageNet-RIB). The benchmark, which can be applied to any pretrained model, consists of a set of related but distinct OOD (downstream) tasks and involves fine-tuning on one of the OOD tasks in the set then testing on the rest. We find that though continual learning methods help, fine-tuning reduces robustness across pretrained models. Surprisingly, models pretrained on the largest and most diverse datasets (e.g., LAION-2B) exhibit both larger robustness losses and lower absolute robustness after fine-tuning on small datasets, relative to models pretrained on smaller datasets. These findings suggest that starting with the strongest foundation model is not necessarily the best approach for performance on specialist tasks.",
+      "authors": "Jaedong Hwang, Brian Cheung, Zhang-Wei Hong, Akhilan Boopathy, Pulkit Agrawal, Ila R Fiete",
+      "keywords": "robust fine-tuning, catastrophic forgetting, transfer learning, representation learning, continual learning",
+      "title": "Large Pretraining Datasets Don't Guarantee Robustness after Fine-Tuning"
+    },
+    "paperscope_version": "0.1.0",
+    "refresh": {
+      "last_checked_at": 1784415339.301099,
+      "next_refresh_at": 1784501739.301099,
+      "refresh_attempts": 0,
+      "status": "active",
+      "terminal_reason": null
+    },
+    "responses": [
+      {
+        "content_hash": "4871a47fd9a32436",
+        "kind": "rebuttal",
+        "modified_at": 1764029471577,
+        "note_id": "loRUjpyjd8",
+        "text": {
+          "excerpt": "As promised in our earlier response, we computed STIR (Similarity Through Inverted Representations) to analyze representational invariances. Importantly, the \u201crobustness\u201d captured by STIR is adversarial robustness (invariance to adversarial perturbations of the input representati",
+          "hash": "cfded71eb6d85f67",
+          "length": 2446
+        }
+      },
+      {
+        "content_hash": "48c94b2d3536ff6d",
+        "kind": "rebuttal",
+        "modified_at": 1763565953152,
+        "note_id": "VQh8waCGz3",
+        "text": {
+          "excerpt": "We thank the reviewer for their thoughtful comments and the opportunity to improve our work. We have carefully considered all points.\n\n\n**Re: Contribution**\n\nWe respectfully disagree with the characterization of our work as \"insufficient.\" LAION-2B and OpenAI models are not the o",
+          "hash": "f8d82b640ee6b6d2",
+          "length": 4707
+        }
+      },
+      {
+        "content_hash": "015d7634a1bbce46",
+        "kind": "rebuttal",
+        "modified_at": 1763565695408,
+        "note_id": "nYumnn5ESi",
+        "text": {
+          "excerpt": "**Re: How would the CKA analysis be like if it is plotted over fine-tuning epochs? Would that help show how the forgetting emerges?**\n\nWe have added a temporal analysis of CKA in Figure 14 in the revision (see also the [anonymous figure link](https://imgur.com/a/FZSnJP7)). Due to",
+          "hash": "2429f4cad422ff2c",
+          "length": 2201
+        }
+      },
+      {
+        "content_hash": "b80f506b3bc59b61",
+        "kind": "rebuttal",
+        "modified_at": 1763566034468,
+        "note_id": "HZXc2Ypg9g",
+        "text": {
+          "excerpt": "**Re: Would it be possible to measure or control the domain distance between pre-training and fine-tuning datasets (e.g., with CLIP embedding distance)? This would clarify whether robustness decrease stems from data-scale or different domain-shift effects.**\n\nWe investigated the ",
+          "hash": "fdb675d0eeb49445",
+          "length": 4216
+        }
+      },
+      {
+        "content_hash": "4fc583e541190ac2",
+        "kind": "rebuttal",
+        "modified_at": 1763565702907,
+        "note_id": "sfCXlN25eh",
+        "text": {
+          "excerpt": "**Re: Weak statements about the position of this work in related work. The related work section reads more like a background rather than a critical positioning of this work relative to prior robustness on transfer-learning studies. In addition to discussing other robust fine-tuni",
+          "hash": "af3178cd6ac3d43d",
+          "length": 3968
+        }
+      },
+      {
+        "content_hash": "064b32cd09318515",
+        "kind": "rebuttal",
+        "modified_at": 1763565986388,
+        "note_id": "NRJoNJOtwB",
+        "text": {
+          "excerpt": "Thank you for your valuable and constructive comments and suggestions. We are glad to hear of your positive impression of the topic and analysis.\n\n**Re: Novelty concern. ImageNet-RIB mainly aggregates existing ImageNet OOD datasets. The conceptual contribution is limited beyond c",
+          "hash": "b124a42af03a9bf7",
+          "length": 4883
+        }
+      },
+      {
+        "content_hash": "5f85f5024e6dd62a",
+        "kind": "rebuttal",
+        "modified_at": 1763566120955,
+        "note_id": "Ky0DgomOm0",
+        "text": {
+          "excerpt": "We thank the reviewer for their thoughtful comments and the opportunity to improve our work. We have carefully considered all points.\n\n**Re: The robustness improvement metric that only looks at the aggregate differences in accuracy is insufficient for a detailed analysis of robus",
+          "hash": "9c21c29d6c1802fb",
+          "length": 4996
+        }
+      }
+    ],
+    "retrieval_errors": [],
+    "reviews": [
+      {
+        "confidence": {
+          "label": "",
+          "raw": "4",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 4.0
+        },
+        "content_hash": "291229b3941f877a",
+        "final_rating": null,
+        "initial_rating": {
+          "label": "",
+          "raw": "2",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 2.0
+        },
+        "invitation": "['ICLR.cc/2026/Conference/Submission2/-/Official_Review', 'ICLR.cc/2026/Conference/-/Edit']",
+        "modified_at": 1762915433943,
+        "note_id": "Y0M7kTngcK",
+        "questions": {
+          "excerpt": "The main concerns are explained together with the weakness section.",
+          "hash": "34e4cb78e6b1f5af",
+          "length": 67
+        },
+        "strengths": {
+          "excerpt": "1. The paper focuses on an important research topic, the robustness issue of fine-tuning. It has become an especially essential domain for understanding large pre-trained models.\n2. The paper is well written and easy to follow.",
+          "hash": "2ef242c1116e4252",
+          "length": 227
+        },
+        "summary": {
+          "excerpt": "This research focuses on the robustness issue (out-of-distribution performance degradation) of fine-tuning. For a more streamlined evaluation, the paper merges various existing out-of-distribution datasets for computer vision and provides several experiments on it. A main claim i",
+          "hash": "29bd6f1cca831142",
+          "length": 483
+        },
+        "text": {
+          "excerpt": "",
+          "hash": "e3b0c44298fc1c14",
+          "length": 0
+        },
+        "weaknesses": {
+          "excerpt": "Although the paper discusses an important research topic and provides several interesting experiments, there are several key concerns, including novelty and experiments.\n1. It is challenging to identify sufficient additional value that this paper contributes to the existing liter",
+          "hash": "ff5758ef5c92d49d",
+          "length": 1844
+        }
+      },
+      {
+        "confidence": {
+          "label": "",
+          "raw": "4",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 4.0
+        },
+        "content_hash": "c6215f67c02eb015",
+        "final_rating": null,
+        "initial_rating": {
+          "label": "",
+          "raw": "4",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 4.0
+        },
+        "invitation": "['ICLR.cc/2026/Conference/Submission2/-/Official_Review', 'ICLR.cc/2026/Conference/-/Edit']",
+        "modified_at": 1762915434166,
+        "note_id": "c2PBHnqMt3",
+        "questions": {
+          "excerpt": "- Would it be possible to measure or control the domain distance between pre-training and fine-tuning datasets (e.g., with CLIP embedding distance)? This would clarify whether robustness decrease stems from data-scale or different domain-shift effects.\n- The paper suggests datase",
+          "hash": "18ea6892ada3adc3",
+          "length": 953
+        },
+        "strengths": {
+          "excerpt": "- **The topic studied is important and timely** - whether \u201cbigger pretraining\u201d always leads to better fine-tuned robustness. This problem is both practically relevant and valuable in a safety context for understanding the scaling behavior of pretrained models \n- **Proposed benchm",
+          "hash": "f7135c871146da53",
+          "length": 1174
+        },
+        "summary": {
+          "excerpt": "The paper studies how fine-tuning affects robustness in pretrained models. It finds that models pretrained on larger, more diverse datasets (e.g., LAION-2B) show stronger catastrophic forgetting phenomenon and out-of-distribution performance loss when fine-tuned on smaller datase",
+          "hash": "1485e76e225f3bc4",
+          "length": 842
+        },
+        "text": {
+          "excerpt": "",
+          "hash": "e3b0c44298fc1c14",
+          "length": 0
+        },
+        "weaknesses": {
+          "excerpt": "We thank the authors for submitting the paper to ICLR 2026! There are a few weaknesses listed below which I believe can make the paper better. For some points, please also refer to the questions below.\n- **Novelty concern.** ImageNet-RIB mainly aggregates existing ImageNet OOD da",
+          "hash": "910a83b4d5478b26",
+          "length": 1727
+        }
+      },
+      {
+        "confidence": {
+          "label": "",
+          "raw": "4",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 4.0
+        },
+        "content_hash": "523e0395fd1b7716",
+        "final_rating": null,
+        "initial_rating": {
+          "label": "",
+          "raw": "4",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 4.0
+        },
+        "invitation": "['ICLR.cc/2026/Conference/Submission2/-/Official_Review', 'ICLR.cc/2026/Conference/-/Edit']",
+        "modified_at": 1762915434702,
+        "note_id": "xDoglyxXDp",
+        "questions": {
+          "excerpt": "1. The robustness improvement metric that only looks at the aggregate differences in accuracy is insufficient for a detailed analysis of robustness preservation, in my opinion, since even with minor aggregate differences, there can be large sample-level variations. Could the auth",
+          "hash": "d6eacb58a9a8aea2",
+          "length": 1570
+        },
+        "strengths": {
+          "excerpt": "1. The investigation of the central question is timely, especially as we are moving towards a regime of blind scaling. I appreciate the author's effort towards running controlled experiments with different variations to pinpoint what leads to (or lack thereof) robustness preserva",
+          "hash": "7784284cd8392f87",
+          "length": 501
+        },
+        "summary": {
+          "excerpt": "The paper conducts a large-scale study effect of finetuning on the robustness capabilities of pretrained vision models. They analyze different finetuning algorithms as well as different pretraining datasets across different sizes and find counterintuitive insights such as larger ",
+          "hash": "532955a640370ab1",
+          "length": 487
+        },
+        "text": {
+          "excerpt": "",
+          "hash": "e3b0c44298fc1c14",
+          "length": 0
+        },
+        "weaknesses": {
+          "excerpt": "While I like the paper\u2019s overall motivation and effort towards a comprehensive experiment design, I have a few fundamental confusions and critiques for some of the design choices. Please see the questions below for specific comments.",
+          "hash": "009594722a8d3285",
+          "length": 233
+        }
+      }
+    ],
+    "sampling_method": "acquisition",
+    "sampling_seed": 42,
+    "schema_version": 1,
+    "url": "https://openreview.net/forum?id=7QjQ1mpNMX",
+    "venue_family": "iclr",
+    "venue_id": "ICLR.cc/2026/Conference",
+    "venue_year": 2026
+  },
+  {
+    "api_version": "v2",
+    "decision": {
+      "category": "",
+      "normalized": "unknown",
+      "note_id": "TvY7J3erL4",
+      "raw_text": ""
+    },
+    "fetched_at": 1784415339.621592,
+    "forum_id": "WffiETiSeU",
+    "paper": {
+      "abstract": "We introduce Part-X-MLLM, a native 3D multimodal large language model that unifies diverse 3D tasks by formulating them as programs in a structured, executable grammar. Given an RGB point cloud and a natural language prompt, our model autoregressively generates a single, coherent token sequence encoding part-level bounding boxes, semantic descriptions, and edit commands. This structured output serves as a versatile interface to drive downstream geometry-aware modules for part-based generation and editing. By decoupling the symbolic planning from the geometric synthesis, our approach allows any compatible geometry engine to be controlled through a single, language-native frontend. We pre-train a dual-encoder architecture to disentangle structure from semantics and instruction-tune the model on a large-scale, part-centric dataset. Experiments demonstrate that our model excels at producing high-quality, structured plans, enabling state-of-the-art performance in grounded Q&A, compositional generation, and localized editing through one unified interface. Project page: https://chunshi.wang/Part-X-MLLM/",
+      "authors": "Chunshi Wang, Junliang Ye, Yunhan Yang, YANG LI, Zizhuo Lin, Jun Zhu, Zhuo Chen, Yawei Luo, Chunchao Guo",
+      "keywords": "3D Computer Vision, 3D Vision-language Modeling, Part-aware 3D understanding, Multimodal Large Language Model",
+      "title": "Part-X-MLLM: Part-aware 3D Multimodal Large Language Model"
+    },
+    "paperscope_version": "0.1.0",
+    "refresh": {
+      "last_checked_at": 1784415339.6216059,
+      "next_refresh_at": 1784501739.6216059,
+      "refresh_attempts": 0,
+      "status": "active",
+      "terminal_reason": null
+    },
+    "responses": [
+      {
+        "content_hash": "c0dcaeaf2caddc55",
+        "kind": "rebuttal",
+        "modified_at": 1764578727442,
+        "note_id": "iwSABfZEsk",
+        "text": {
+          "excerpt": "Dear Area Chair,\n\nWe fully understand the significant workload you are facing during this busy decision period. We are truly grateful for the time and dedication you have invested in maintaining the high standards of the review process.\n\nTo assist in your final evaluation, we hav",
+          "hash": "4b0b844ccf4e74e2",
+          "length": 3830
+        }
+      },
+      {
+        "content_hash": "f2d784e4d63cae0b",
+        "kind": "rebuttal",
+        "modified_at": 1764304791335,
+        "note_id": "LzD2a3pQge",
+        "text": {
+          "excerpt": "Thanks Authors for your response. My concerns have been addressed.",
+          "hash": "ddf53c188898d1c9",
+          "length": 66
+        }
+      },
+      {
+        "content_hash": "f4cafee1338745a8",
+        "kind": "rebuttal",
+        "modified_at": 1764302564133,
+        "note_id": "OOytPQzF1E",
+        "text": {
+          "excerpt": "Thank you so much for the reply. The author has addressed all my questions, and I have also reviewed the feedback from others. I will keep my score.",
+          "hash": "ef59039aa9b5dccf",
+          "length": 148
+        }
+      },
+      {
+        "content_hash": "61e4ce68a423a727",
+        "kind": "rebuttal",
+        "modified_at": 1764157251194,
+        "note_id": "WDunaBZpFU",
+        "text": {
+          "excerpt": "We deeply appreciate the reviewer\u2019s professional assessment and constructive suggestions throughout the review process. We have completed the PDF paper revision and marked the newly added and modified sections in **blue font**.\n\nTo address your primary concern regarding reproduci",
+          "hash": "127ce797f18e606f",
+          "length": 2069
+        }
+      },
+      {
+        "content_hash": "769c83c98e11f8ab",
+        "kind": "rebuttal",
+        "modified_at": 1764146082556,
+        "note_id": "kPcSIuEaWD",
+        "text": {
+          "excerpt": "Thank you very much for the authors\u2019 response. The authors have addressed my questions well. My main concern lies in the reproducibility of this work, as the training settings are not described with sufficient clarity, and many of the benchmarks, datasets, and model checkpoints i",
+          "hash": "a3ea827d96ab38b7",
+          "length": 393
+        }
+      },
+      {
+        "content_hash": "807028dbe7b4ecdd",
+        "kind": "rebuttal",
+        "modified_at": 1763956708722,
+        "note_id": "gM9JAATpP1",
+        "text": {
+          "excerpt": "Thank you very much for the author's reply. The author has addressed all my questions, and I have also reviewed the feedback from others. I believe this paper deserves acceptance, so I have raised my score.",
+          "hash": "5bd2735c4095db50",
+          "length": 206
+        }
+      },
+      {
+        "content_hash": "2f355acc1efcd740",
+        "kind": "rebuttal",
+        "modified_at": 1763802571718,
+        "note_id": "JnOIJW7WMz",
+        "text": {
+          "excerpt": "We thank the reviewer for the excellent rating and for identifying the key strengths of our grammar-based approach. We appreciate the challenging questions regarding robustness and contribution isolation, which have prompted us to add significant new evidence. We have completed t",
+          "hash": "f6ba0853285cb3f8",
+          "length": 3760
+        }
+      },
+      {
+        "content_hash": "3f5327638fd4c49a",
+        "kind": "rebuttal",
+        "modified_at": 1763800353602,
+        "note_id": "Hu81URgS1D",
+        "text": {
+          "excerpt": "We thank the reviewer for the positive assessment of our work's practicality and the value of our unified framework. We also appreciate the helpful suggestions regarding state-of-the-art comparisons and scene generation extensions. We have completed the PDF paper revision and mar",
+          "hash": "b58ff90d020712ce",
+          "length": 3261
+        }
+      },
+      {
+        "content_hash": "9c09d5e903045b75",
+        "kind": "rebuttal",
+        "modified_at": 1763800288818,
+        "note_id": "r2NlbjivbO",
+        "text": {
+          "excerpt": "We thank the reviewer for the insightful comments regarding evaluation methodology. We appreciate the guidance to include LLM-based metrics and contemporary baselines, which has significantly strengthened our experimental section. We have completed the PDF paper revision and mark",
+          "hash": "a634aa6651995882",
+          "length": 4296
+        }
+      },
+      {
+        "content_hash": "152137b5d9290081",
+        "kind": "rebuttal",
+        "modified_at": 1763800497614,
+        "note_id": "7ZAmHfR04C",
+        "text": {
+          "excerpt": "We thank the reviewer for the detailed reading and for highlighting areas where the clarity of our presentation could be improved. We also appreciate the suggestion to include a qualitative user study, which has strengthened our evaluation. We have completed the PDF paper revisio",
+          "hash": "e05c0c69e8f940d1",
+          "length": 3968
+        }
+      }
+    ],
+    "retrieval_errors": [],
+    "reviews": [
+      {
+        "confidence": {
+          "label": "",
+          "raw": "4",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 4.0
+        },
+        "content_hash": "9e15617cb7e0d6e7",
+        "final_rating": null,
+        "initial_rating": {
+          "label": "",
+          "raw": "6",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 6.0
+        },
+        "invitation": "['ICLR.cc/2026/Conference/Submission3/-/Official_Review', 'ICLR.cc/2026/Conference/-/Edit']",
+        "modified_at": 1762915433888,
+        "note_id": "nirU1Dk83I",
+        "questions": {
+          "excerpt": "n/a",
+          "hash": "a683c5c5349f6f7f",
+          "length": 3
+        },
+        "strengths": {
+          "excerpt": "This paper presents Part-X-MLLM, a 3D large language model for diverse 3D tasks by formulating them as programs in an executable grammar. Overall, the work is decent, includes a large curated dataset, and is generalizable across 11 tasks. \n\n+ The two-stage training process is int",
+          "hash": "34419840a64739fd",
+          "length": 529
+        },
+        "summary": {
+          "excerpt": "Novel, but paper writing could be improved",
+          "hash": "1736df8807d95b41",
+          "length": 42
+        },
+        "text": {
+          "excerpt": "",
+          "hash": "e3b0c44298fc1c14",
+          "length": 0
+        },
+        "weaknesses": {
+          "excerpt": "- Small typo in line 192 'boxe'\n\n- The writing is a bit hard to follow in places. For example, in line 35, I am not sure why Part-X-MLLM is 'native'. Similarly, the mention of 'structural opaqueness' in line 53 is not clear.\n\n- The distinction with past works is not clear enough.",
+          "hash": "6214f5bb28e7e7d2",
+          "length": 513
+        }
+      },
+      {
+        "confidence": {
+          "label": "",
+          "raw": "5",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 5.0
+        },
+        "content_hash": "a34e2eb3064b9837",
+        "final_rating": null,
+        "initial_rating": {
+          "label": "",
+          "raw": "4",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 4.0
+        },
+        "invitation": "['ICLR.cc/2026/Conference/Submission3/-/Official_Review', 'ICLR.cc/2026/Conference/-/Edit']",
+        "modified_at": 1762915434112,
+        "note_id": "QpcwR0QXxN",
+        "questions": {
+          "excerpt": "1.Evaluation metrics are primarily limited to standard natural-language measures. It would strengthen the evaluation to incorporate LLM-based automatic assessment frameworks (e.g., GPT-based judging protocols) to better capture semantic correctness and reasoning quality.\n\n2.Basel",
+          "hash": "09e34ab982fd0456",
+          "length": 874
+        },
+        "strengths": {
+          "excerpt": "1.Addressing part-level 3D multimodal modeling is timely and necessary.\n\n2.The proposed dual-encoder design effectively encodes complementary attributes of 3D objects.\n\n3.The use of task-specific prompts and special tokens enables diverse part-centric tasks within a unified frame",
+          "hash": "0b67b49856f54bdb",
+          "length": 285
+        },
+        "summary": {
+          "excerpt": "This paper builds a multimodal framework and benchmark focused on 3D part-level understanding based on Qwen2.5-VL. The authors propose a dual-encoder architecture and a multi-stage training pipeline to jointly model geometric structures and semantic appearance for 3D objects.",
+          "hash": "ad6c502d02b9ceab",
+          "length": 276
+        },
+        "text": {
+          "excerpt": "",
+          "hash": "e3b0c44298fc1c14",
+          "length": 0
+        },
+        "weaknesses": {
+          "excerpt": "1.Evaluation metrics rely mainly on traditional natural-language metrics; consider including LLM-based scoring (e.g., GPT-judge) for more robust assessment.\n\n2.Baselines: comparison is limited; please include strong 2025-era SOTA 3D multimodal models on QA and grounding tasks (e.",
+          "hash": "30375263af042d6d",
+          "length": 526
+        }
+      },
+      {
+        "confidence": {
+          "label": "",
+          "raw": "3",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 3.0
+        },
+        "content_hash": "8c790a41dd91dd88",
+        "final_rating": null,
+        "initial_rating": {
+          "label": "",
+          "raw": "6",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 6.0
+        },
+        "invitation": "['ICLR.cc/2026/Conference/Submission3/-/Official_Review', 'ICLR.cc/2026/Conference/-/Edit']",
+        "modified_at": 1764359252501,
+        "note_id": "TTVeBOwMno",
+        "questions": {
+          "excerpt": "First, part-based 3D is not my primary research area, so I am not fully aware of the most cutting-edge advancements in this field. I would like to see other reviewers' opinions on whether the comparative methods used in this paper are sufficiently state-of-the-art across various ",
+          "hash": "724f5e80bd0630fa",
+          "length": 1259
+        },
+        "strengths": {
+          "excerpt": "- The research on part-based 3D generation is highly practical, and the authors have designed a unified framework that integrates 3D generation, understanding, and editing, which is very valuable.\n- The paper not only proposes a large model, Part-X-MLLM, but also introduces a new",
+          "hash": "0609de9195a92948",
+          "length": 524
+        },
+        "summary": {
+          "excerpt": "This paper introduces Part-X-MLLM, a novel part-aware 3D Multimodal Large Language Model. Its central contribution is the unification of diverse 3D tasks\u2014including generation, editing, and question-answering\u2014under a single framework by formulating them as programs within a struct",
+          "hash": "8c60d47c2b5ae0f3",
+          "length": 1135
+        },
+        "text": {
+          "excerpt": "",
+          "hash": "e3b0c44298fc1c14",
+          "length": 0
+        },
+        "weaknesses": {
+          "excerpt": "See the \"Questions\" section.",
+          "hash": "e7c6f56a04ea8462",
+          "length": 28
+        }
+      },
+      {
+        "confidence": {
+          "label": "",
+          "raw": "4",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 4.0
+        },
+        "content_hash": "264afaa8764b5745",
+        "final_rating": null,
+        "initial_rating": {
+          "label": "",
+          "raw": "8",
+          "scale_max": null,
+          "scale_min": null,
+          "value": 8.0
+        },
+        "invitation": "['ICLR.cc/2026/Conference/Submission3/-/Official_Review', 'ICLR.cc/2026/Conference/-/Edit']",
+        "modified_at": 1762915434542,
+        "note_id": "Q8DjJH3Cls",
+        "questions": {
+          "excerpt": "1. Can the model sustain the same part-aware behavior when the input is not a clean synthetic asset but a noisy or incomplete real-world scan? Are there any stress-tests quantifying degradation under distribution shift?\n2. Given that the benchmark shares annotation grammar and ta",
+          "hash": "844c239254fc3c24",
+          "length": 510
+        },
+        "strengths": {
+          "excerpt": "1. This paper is well-written and very easy to follow.\n2. The paper identifies a real gap: existing 3D LLMs \u201cunderstand scenes\u201d or \u201cgenerate geometry\u201d but do not provide a unified, language-native, executable control surface over 3D parts. Casting all tasks as program generation ",
+          "hash": "7c42a8dd03d4a4e1",
+          "length": 816
+        },
+        "summary": {
+          "excerpt": "The paper proposes Part-X-MLLM, a native 3D multimodal LLM designed to operate not on whole 3D objects as monolithic shapes, but at part granularity. The key idea is to cast all 3D tasks (part captioning, grounding, Q&A, generation, and edit control) as autoregressive program gen",
+          "hash": "eea86b06e5c42b15",
+          "length": 380
+        },
+        "text": {
+          "excerpt": "",
+          "hash": "e3b0c44298fc1c14",
+          "length": 0
+        },
+        "weaknesses": {
+          "excerpt": "1. All experiments are conducted on clean, part-annotated synthetic assets with well-formed AABBs. There is no evidence that the model works under realistic conditions (partial scans, occlusion, noise, incomplete parts, inconsistent normals).\n2. UniPart-Bench adopts the same gram",
+          "hash": "d5e0e860ed26e053",
+          "length": 757
+        }
+      }
+    ],
+    "sampling_method": "acquisition",
+    "sampling_seed": 42,
+    "schema_version": 1,
+    "url": "https://openreview.net/forum?id=WffiETiSeU",
+    "venue_family": "iclr",
+    "venue_id": "ICLR.cc/2026/Conference",
+    "venue_year": 2026
+  }
+]

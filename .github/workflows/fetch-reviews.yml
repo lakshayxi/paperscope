@@ -1,0 +1,155 @@
+name: fetch-reviews
+
+on:
+  schedule:
+    # Weekly -- OpenReview data for an active cycle trickles in slowly; daily polling
+    # would just burn CI minutes and risk unnecessary rate-limit churn for near-zero
+    # new data most days.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      family:
+        description: "Space-separated venue families, e.g. iclr neurips"
+        default: "iclr"
+      years:
+        description: "Space-separated years"
+        default: "2026"
+      papers:
+        description: "Unseen forums to fetch per venue-year"
+        default: "20"
+      seed:
+        description: "Seed for reproducible acquisition sampling"
+        default: "42"
+      refresh_policy:
+        description: "Refresh policy for already-fetched forums"
+        default: "active"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: paperscope-data-fetch
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    env:
+      OPENREVIEW_USERNAME: ${{ secrets.OPENREVIEW_USERNAME }}
+      OPENREVIEW_PASSWORD: ${{ secrets.OPENREVIEW_PASSWORD }}
+      OPENREVIEW_TOKEN: ${{ secrets.OPENREVIEW_TOKEN }}
+      FAMILY: ${{ github.event.inputs.family || 'iclr' }}
+      YEARS: ${{ github.event.inputs.years || '2026' }}
+      PAPERS: ${{ github.event.inputs.papers || '20' }}
+      SEED: ${{ github.event.inputs.seed || '42' }}
+      REFRESH_POLICY: ${{ github.event.inputs.refresh_policy || 'active' }}
+    steps:
+      - name: Checkout main (script)
+        uses: actions/checkout@v4
+
+      - name: Checkout data branch
+        id: checkout_data
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: data
+          path: data-branch
+          fetch-depth: 1
+
+      - name: Bootstrap data branch if missing
+        if: steps.checkout_data.outcome == 'failure'
+        run: |
+          rm -rf data-branch
+          git clone --depth 1 "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" data-branch
+          cd data-branch
+          git checkout --orphan data
+          git rm -rf . > /dev/null 2>&1 || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "bootstrap data branch"
+          git push origin HEAD:data
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package
+        run: pip install -e .
+
+      - name: Restore prior state from data branch
+        run: |
+          mkdir -p data/full data/public
+          # Seed the working corpus from the previously committed public index -- the
+          # full-text tier is never persisted across CI runs (see docs/redistribution.md);
+          # carried-forward records simply keep their already-excerpted text, which is
+          # fine since CI never needs to re-expose full text for unchanged records.
+          cp data-branch/public/*.jsonl data/full/ 2>/dev/null || true
+          cp data-branch/public/*.manifest.json data/public/ 2>/dev/null || true
+          # Cursor/resumability state carries no review content -- safe to commit and
+          # restore directly.
+          cp data-branch/full/*.cursors.json data/full/ 2>/dev/null || true
+          jsonl_count=$(find data/full -maxdepth 1 -name '*.jsonl' | wc -l)
+          cursor_count=$(find data/full -maxdepth 1 -name '*.cursors.json' | wc -l)
+          echo "restored $jsonl_count full-tier file(s), $cursor_count cursor file(s)"
+
+      - name: Fetch (with retry)
+        run: |
+          set -o pipefail
+          mkdir -p logs
+          LOGFILE="logs/fetch_run.log"
+          MAX_ATTEMPTS=3
+          DELAY=30
+          for attempt in $(seq 1 $MAX_ATTEMPTS); do
+            echo "=== attempt $attempt/$MAX_ATTEMPTS ===" | tee -a "$LOGFILE"
+            if paperscope fetch venue --family $FAMILY --years $YEARS --papers "$PAPERS" \
+                 --seed "$SEED" --refresh-policy "$REFRESH_POLICY" 2>&1 | tee -a "$LOGFILE"; then
+              exit 0
+            fi
+            echo "attempt $attempt failed, retrying in ${DELAY}s..." | tee -a "$LOGFILE"
+            sleep $DELAY
+            DELAY=$((DELAY * 2))
+          done
+          echo "all $MAX_ATTEMPTS attempts failed" | tee -a "$LOGFILE"
+          exit 1
+        # This retries whole-process failures (install issues, transient crashes). Per-
+        # request rate-limit retry/backoff already happens inside openreview-py itself
+        # (see src/paperscope/openreview_client.py) -- this loop is a coarser second
+        # safety net, not a duplicate of it. A partial fetch (some venues errored but the
+        # process didn't crash) still exits 0 here; that's caught by the summary step
+        # below via each venue's individual status.
+        continue-on-error: true
+        id: fetch
+
+      - name: Upload full log as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fetch-log-${{ github.run_id }}
+          path: logs/fetch_run.log
+          retention-days: 30
+
+      - name: Summarize run
+        id: summarize
+        run: python scripts/summarize_run.py logs/fetch_run.log data-branch/run_summary.json
+
+      - name: Persist state to data branch
+        if: always()
+        run: |
+          mkdir -p data-branch/public data-branch/full
+          cp data/public/*.jsonl data-branch/public/ 2>/dev/null || true
+          cp data/public/*.manifest.json data-branch/public/ 2>/dev/null || true
+          cp data/full/*.cursors.json data-branch/full/ 2>/dev/null || true
+          cd data-branch
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- public full run_summary.json
+          if git diff --cached --quiet; then
+            echo "no data changes to commit"
+          else
+            git commit -m "fetch: $(date -u +%Y-%m-%dT%H:%M:%SZ) (family=$FAMILY years=$YEARS papers=$PAPERS)"
+            git push origin HEAD:data
+          fi
+
+      - name: Fail job if the fetch or summary step failed
+        if: steps.fetch.outcome == 'failure' || steps.summarize.outcome == 'failure'
+        run: exit 1
