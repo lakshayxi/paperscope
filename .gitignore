@@ -1,4 +1,4 @@
-# corpus data — generate locally with: python expl.py bulk
+# legacy corpus data — generate locally with: python expl.py bulk
 corpus*.json
 analysis_results.json
 
@@ -12,12 +12,21 @@ watch.log
 # old/stale scripts
 fetch_and_train.py
 
+# paperscope corpus data — full tier is never committed anywhere; the public-index tier
+# is committed only on the `data` branch (via CI checkout into a separate path), never on
+# main. artifacts/ holds generated statistics/evidence bundles (a later phase).
+data/
+artifacts/
+
 # python
 __pycache__/
 *.pyc
 *.pyo
 .venv/
 venv/
+*.egg-info/
+build/
+dist/
 
 # env
 .env

@@ -1,0 +1,40 @@
+{
+  "ICLR 2024": [
+    {
+      "note_id": "rev_a1",
+      "forum_id": "forumA",
+      "rating": "6: marginally above the acceptance threshold",
+      "rating_num": 6.0,
+      "confidence": "4: confident",
+      "summary": "A summary",
+      "text": "Review text A",
+      "strengths": "Good idea",
+      "weaknesses": "Weak evaluation",
+      "questions": "Why not more baselines?"
+    },
+    {
+      "note_id": "rev_a2",
+      "forum_id": "forumA",
+      "rating": "3: reject, not good enough",
+      "rating_num": 3.0,
+      "confidence": "3: fairly confident",
+      "summary": "",
+      "text": "Review text A2",
+      "strengths": "",
+      "weaknesses": "Missing ablations",
+      "questions": ""
+    },
+    {
+      "note_id": "rev_b1",
+      "forum_id": "forumB",
+      "rating": "8: accept, good paper",
+      "rating_num": 8.0,
+      "confidence": "5: absolutely certain",
+      "summary": "",
+      "text": "Review text B",
+      "strengths": "Excellent",
+      "weaknesses": "",
+      "questions": ""
+    }
+  ]
+}
