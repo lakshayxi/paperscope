@@ -90,6 +90,16 @@ PUBLIC_EXCERPT_MAX_CHARS = 280
 DATA_DIR = Path("data")
 ARTIFACTS_DIR = Path("artifacts")
 
+# Phase 3A -- statistics.py / evidence.py (see docs/statistics_and_evidence.md).
+STATS_SCHEMA_VERSION = 1
+EVIDENCE_SCHEMA_VERSION = 1
+# Evidence bundles are local-only (gitignored, under artifacts/), never committed --
+# unlike PUBLIC_EXCERPT_MAX_CHARS this isn't a redistribution constraint, just a bound
+# to keep bundles reviewable. Bounded, not full text, so bundle size stays predictable.
+EVIDENCE_EXCERPT_MAX_CHARS = 600
+DEFAULT_EVIDENCE_MAX_ITEMS = 60
+DEFAULT_EVIDENCE_PER_BUCKET = 4
+
 
 def is_active_cycle_venue(venue_family: str, venue_year: int | None) -> bool:
     """True if this family/year pair is one of the venues currently in an active review

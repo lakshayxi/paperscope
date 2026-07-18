@@ -44,3 +44,38 @@ def test_fetch_venue_requires_family():
 
     with pytest.raises(SystemExit):
         build_parser().parse_args(["fetch", "venue"])
+
+
+def test_stats_parses_corpus_and_output():
+    args = build_parser().parse_args(["stats", "--corpus", "data/full/iclr.jsonl", "--output", "artifacts/statistics"])
+    assert args.corpus == "data/full/iclr.jsonl"
+    assert args.output == "artifacts/statistics"
+
+
+def test_stats_requires_corpus():
+    import pytest
+
+    with pytest.raises(SystemExit):
+        build_parser().parse_args(["stats"])
+
+
+def test_evidence_parses_corpus_output_seed():
+    args = build_parser().parse_args(
+        ["evidence", "--corpus", "data/full/iclr.jsonl", "--output", "artifacts/bundle.json", "--seed", "7"]
+    )
+    assert args.corpus == "data/full/iclr.jsonl"
+    assert args.output == "artifacts/bundle.json"
+    assert args.seed == 7
+    assert args.max_items > 0 and args.per_bucket > 0  # defaults are populated
+
+
+def test_evidence_default_seed():
+    args = build_parser().parse_args(["evidence", "--corpus", "data/full/iclr.jsonl", "--output", "out.json"])
+    assert args.seed == 42
+
+
+def test_evidence_requires_corpus():
+    import pytest
+
+    with pytest.raises(SystemExit):
+        build_parser().parse_args(["evidence"])

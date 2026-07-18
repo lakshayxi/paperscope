@@ -35,20 +35,23 @@ flowchart LR
     ST -->|full text, local only| FULL["data/full/ (gitignored)"]
     ST -->|excerpts + hashes| PUB["data/public/"]
     PUB -->|scheduled CI| BRANCH[("data branch")]
+    FULL --> STATS["statistics"]
+    FULL --> EVID["evidence bundles"]
+    PUB --> STATS
 
     subgraph next["coming next"]
-        STATS["statistics"]
-        EVID["evidence bundles"]
         GEN["generation"]
         SKILL["skill build"]
     end
-    FULL -.-> next
+    EVID -.-> next
 ```
 
-The `statistics` / `evidence` / `generation` / `skill build` modules aren't built yet —
-shown here so the diagram doesn't overclaim what exists today. See
-[`docs/redistribution.md`](docs/redistribution.md) for why review text is split into a
-full local tier and a excerpted public tier.
+`statistics` (`paperscope stats`) and `evidence` (`paperscope evidence`) are built —
+deterministic, offline, no API keys needed; see
+[`docs/statistics_and_evidence.md`](docs/statistics_and_evidence.md). `generation` /
+`skill build` aren't built yet — shown here so the diagram doesn't overclaim what exists
+today. See [`docs/redistribution.md`](docs/redistribution.md) for why review text is
+split into a full local tier and a excerpted public tier.
 
 ---
 
@@ -108,7 +111,17 @@ paperscope fetch forum --url "https://openreview.net/forum?id=XXXXX"
 
 # Import an old corpus_<family>.json into the new schema
 paperscope migrate corpus_iclr.json
+
+# Deterministic, venue/year-scoped statistics -- writes statistics.json + statistics.md
+paperscope stats --corpus data/full/iclr.jsonl --output artifacts/statistics
+
+# Bounded, seeded evidence bundle for the (future) calibration/generation phase
+paperscope evidence --corpus data/full/iclr.jsonl --output artifacts/evidence_bundle.json --seed 42
 ```
+
+Both `stats` and `evidence` are deterministic and offline (no OpenReview or Anthropic
+credentials needed) — see [`docs/statistics_and_evidence.md`](docs/statistics_and_evidence.md)
+for the full command reference, output schemas, and known limitations.
 
 Fetched data is stored two ways (see [Architecture](#architecture)):
 `data/full/<family>.jsonl` (complete review text, never committed anywhere) and
@@ -219,13 +232,16 @@ paperscope/
 │   ├── sampling.py                 # seeded/deterministic acquisition
 │   ├── refresh_policy.py           # existing-forum refresh selection
 │   ├── storage.py                  # two-tier JSONL + manifest, migration
+│   ├── statistics.py                # deterministic venue/year-scoped stats
+│   ├── evidence.py                  # bounded, seeded evidence bundles
 │   └── cli.py                      # `paperscope` entry point
 ├── tests/
 ├── .github/workflows/
 │   ├── ci.yml                      # lint + test
 │   └── fetch-reviews.yml           # scheduled fetch automation
 ├── docs/
-│   └── redistribution.md
+│   ├── redistribution.md
+│   └── statistics_and_evidence.md
 ├── demo/
 ├── skill/
 │   ├── SKILL.md                    # Claude Code skill definition

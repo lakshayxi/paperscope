@@ -3,6 +3,17 @@
 ## Unreleased
 
 ### Added
+- `paperscope stats` (`src/paperscope/statistics.py`): deterministic, venue/year-scoped
+  corpus statistics (counts, missing-data rates, rating/confidence distributions,
+  decision distribution, paper-level mean/variance, reviewer disagreement, initial-to-
+  final rating changes, and an explicitly observational rebuttal-present vs. absent
+  comparison), written as machine-readable `statistics.json` plus a deterministic
+  Markdown summary.
+- `paperscope evidence` (`src/paperscope/evidence.py`): bounded, seeded evidence-bundle
+  generation stratified across decision/rating/year/disagreement/rebuttal axes, with full
+  per-excerpt provenance and validation that rejects unknown IDs, duplicate evidence IDs,
+  hash/excerpt mismatches, held-out overlap, and unsupported venue/year claims. See
+  `docs/statistics_and_evidence.md`.
 - `src/paperscope/` package: paper-centric corpus schema (`ForumRecord`), OpenReview
   client with token/guest-mode support, cursor-based pagination, seeded deterministic
   acquisition sampling, a refresh policy for scheduled re-fetching, two-tier storage

@@ -8,9 +8,18 @@ import re
 import sys
 from pathlib import Path
 
+from paperscope import evidence as evidence_mod
 from paperscope import refresh_policy as refresh_policy_mod
+from paperscope import statistics as statistics_mod
 from paperscope import storage
-from paperscope.config import DEFAULT_PER_VENUE, DEFAULT_SEED, VENUES
+from paperscope.config import (
+    ARTIFACTS_DIR,
+    DEFAULT_EVIDENCE_MAX_ITEMS,
+    DEFAULT_EVIDENCE_PER_BUCKET,
+    DEFAULT_PER_VENUE,
+    DEFAULT_SEED,
+    VENUES,
+)
 from paperscope.discovery import discover_review_invitation
 from paperscope.openreview_client import auth_mode, get_client
 from paperscope.parsing import build_forum_record
@@ -174,6 +183,55 @@ def cmd_migrate(args) -> None:
         print(f"  migrated {len(records)} forums into {family} ({full_path})")
 
 
+def cmd_stats(args) -> None:
+    corpus_path = Path(args.corpus)
+    records = storage.load_corpus(corpus_path)
+    if not records:
+        sys.exit(f"no records found in {corpus_path}")
+
+    corpus_hash = storage.corpus_hash(records)
+    generated_at = statistics_mod.iso_now()
+    stats = statistics_mod.compute_all_statistics(records, corpus_hash=corpus_hash, generated_at=generated_at)
+
+    out_dir = Path(args.output)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    statistics_mod.write_statistics_json(out_dir / "statistics.json", stats, corpus_hash=corpus_hash, generated_at=generated_at)
+    md = statistics_mod.render_markdown(stats, corpus_hash=corpus_hash, generated_at=generated_at)
+    storage.atomic_write_text(out_dir / "statistics.md", md)
+
+    print(f"wrote {len(stats)} statistics ({len(records)} forums) to {out_dir}")
+
+
+def cmd_evidence(args) -> None:
+    corpus_path = Path(args.corpus)
+    records = storage.load_corpus(corpus_path)
+    if not records:
+        sys.exit(f"no records found in {corpus_path}")
+
+    held_out_forum_ids = None
+    if args.held_out:
+        held_out_forum_ids = set(json.loads(Path(args.held_out).read_text()))
+
+    corpus_hash = storage.corpus_hash(records)
+    generated_at = statistics_mod.iso_now()
+    try:
+        items = evidence_mod.select_evidence(
+            records,
+            seed=args.seed,
+            corpus_hash=corpus_hash,
+            max_items=args.max_items,
+            per_bucket=args.per_bucket,
+            held_out_forum_ids=held_out_forum_ids,
+        )
+        evidence_mod.validate_evidence_bundle(items, records, held_out_forum_ids=held_out_forum_ids)
+    except (ValueError, evidence_mod.EvidenceValidationError) as e:
+        sys.exit(f"evidence generation failed: {e}")
+
+    out_path = Path(args.output)
+    evidence_mod.write_evidence_bundle(out_path, items, corpus_hash=corpus_hash, generated_at=generated_at, seed=args.seed)
+    print(f"wrote {len(items)} evidence items to {out_path}")
+
+
 def cmd_discover(args) -> None:
     client = get_client(args.api_version)
     inv = discover_review_invitation(client, args.venue_id, args.api_version)
@@ -221,6 +279,26 @@ def build_parser() -> argparse.ArgumentParser:
     discover_p.add_argument("venue_id")
     discover_p.add_argument("--api-version", choices=["v1", "v2"], default="v2")
     discover_p.set_defaults(func=cmd_discover)
+
+    stats_p = sub.add_parser("stats", help="Compute deterministic venue/year-scoped corpus statistics")
+    stats_p.add_argument("--corpus", required=True, help="Path to a corpus JSONL file (full or public tier)")
+    stats_p.add_argument("--output", default=str(ARTIFACTS_DIR / "statistics"),
+                          help="Output directory for statistics.json + statistics.md")
+    stats_p.set_defaults(func=cmd_stats)
+
+    evidence_p = sub.add_parser("evidence", help="Generate a bounded, deterministic evidence bundle")
+    evidence_p.add_argument("--corpus", required=True, help="Path to a full-text corpus JSONL file (data/full/)")
+    evidence_p.add_argument("--output", default=str(ARTIFACTS_DIR / "evidence_bundle.json"),
+                             help="Output path for the evidence bundle JSON file")
+    evidence_p.add_argument("--seed", type=int, default=DEFAULT_SEED,
+                             help=f"Seed for reproducible stratified sampling (default: {DEFAULT_SEED})")
+    evidence_p.add_argument("--max-items", type=int, default=DEFAULT_EVIDENCE_MAX_ITEMS,
+                             help=f"Max evidence items in the bundle (default: {DEFAULT_EVIDENCE_MAX_ITEMS})")
+    evidence_p.add_argument("--per-bucket", type=int, default=DEFAULT_EVIDENCE_PER_BUCKET,
+                             help=f"Max items sampled per stratification bucket (default: {DEFAULT_EVIDENCE_PER_BUCKET})")
+    evidence_p.add_argument("--held-out", default=None,
+                             help="Path to a JSON list of forum IDs to exclude (held-out evaluation set)")
+    evidence_p.set_defaults(func=cmd_evidence)
 
     return parser
 
