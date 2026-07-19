@@ -208,6 +208,39 @@ def _forum_metrics(
         decision_hist[key] = decision_hist.get(key, 0) + 1
     add("decision_distribution", n_forums, decision_hist.get("unknown", 0), dict(sorted(decision_hist.items())))
 
+    # rating-vs-decision joint distribution, using the same tercile bucketing convention
+    # (ties lean toward "medium") as evidence.py's rating_bucket, computed independently
+    # here to keep statistics.py and evidence.py decoupled.
+    if rating_values:
+        sorted_ratings = sorted(rating_values)
+        lo_cut = sorted_ratings[len(sorted_ratings) // 3]
+        hi_cut = sorted_ratings[(2 * len(sorted_ratings)) // 3]
+    else:
+        lo_cut = hi_cut = 0.0
+
+    def _rating_tercile(v: float) -> str:
+        if v < lo_cut:
+            return "low"
+        if v > hi_cut:
+            return "high"
+        return "medium"
+
+    crosstab: dict[str, dict[str, int]] = {}
+    for f in forums:
+        decision_key = f.decision.normalized or "unknown"
+        for r in f.reviews:
+            if r.initial_rating.value is None:
+                continue
+            bucket = _rating_tercile(r.initial_rating.value)
+            row = crosstab.setdefault(decision_key, {})
+            row[bucket] = row.get(bucket, 0) + 1
+    add(
+        "rating_decision_crosstab",
+        len(rating_values),
+        len(all_reviews) - len(rating_values),
+        {d: dict(sorted(b.items())) for d, b in sorted(crosstab.items())},
+    )
+
     per_forum_means, per_forum_vars, per_forum_ranges = [], [], []
     forums_with_rating = forums_with_2plus = 0
     for f in forums:

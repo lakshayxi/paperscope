@@ -129,6 +129,17 @@ def test_rating_scales_are_scope_isolated_across_venues():
     assert otherv_norm.value["0.9-1.0"] == 1  # value 6.0 -> normalized 1.0
 
 
+def test_rating_decision_crosstab_exact():
+    stats = compute_all_statistics(_fixture_records(), corpus_hash="abc123", generated_at="t0")
+
+    crosstab = _stat(stats, "rating_decision_crosstab", "testv", 2025)
+    # 3-value corpus {4, 6, 8}: lo_cut=sorted[1]=6.0, hi_cut=sorted[2]=8.0
+    # -> 4.0 is "low" (4 < 6), 6.0 and 8.0 are "medium" (tie leans medium, both in [6, 8])
+    # forum A (accept): ratings 6 -> medium, 4 -> low; forum B (reject): rating 8 -> medium
+    assert crosstab.sample_size == 3 and crosstab.missing_count == 0
+    assert crosstab.value == {"accept": {"low": 1, "medium": 1}, "reject": {"medium": 1}}
+
+
 def test_paper_mean_rating_and_variance_exact():
     stats = compute_all_statistics(_fixture_records(), corpus_hash="abc123", generated_at="t0")
 

@@ -32,6 +32,7 @@ Writes two files into `--output <directory>`:
 | `rating_distribution_raw` / `confidence_distribution_raw` | histogram keyed by the reported value |
 | `rating_distribution_normalized` / `confidence_distribution_normalized` | same, min-max scaled to `[0,1]` and bucketed into deciles |
 | `decision_distribution` | histogram of normalized decision categories |
+| `rating_decision_crosstab` | joint distribution: rating tercile (low/medium/high, ties lean medium) × decision category |
 | `paper_mean_rating` | distribution (count/mean/stdev/median/min/max) of each forum's mean rating across its rated reviews |
 | `paper_rating_variance` | same, but population variance per forum (only forums with ≥2 rated reviews) |
 | `reviewer_disagreement` | same, but per-forum range (max − min); plus a `{0, 1-2, 3-4, 5+}` histogram bucket |
@@ -126,6 +127,13 @@ regardless of which run selected it. `content_hash` is the review's full-text ha
 (`Review.content_hash`, computed over the untruncated text/strengths/weaknesses/questions),
 unaffected by `excerpt_text` truncation — it proves the excerpt points at the correct
 source review, not that `excerpt_text` itself is unedited (see Validation).
+
+The bundle file's top level also carries a `bundle_hash` — a hash over the sorted set of
+`evidence_id`s in the bundle, distinct from each item's per-excerpt `corpus_hash`. It
+changes if the *selected set* of evidence changes (different seed, different bound,
+different corpus), but not if only item order or run metadata (timestamp, seed value
+itself) changes — a quick way to tell whether two bundles contain the same evidence
+without diffing every item.
 
 ## Validation
 

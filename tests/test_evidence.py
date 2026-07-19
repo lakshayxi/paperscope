@@ -174,6 +174,25 @@ def test_write_evidence_bundle_roundtrips_and_validates(tmp_path):
     assert path.exists()
 
 
+def test_bundle_hash_is_deterministic_and_order_independent(tmp_path):
+    records = storage.load_corpus(REAL_CORPUS)
+    corpus_hash = storage.corpus_hash(records)
+    items = select_evidence(records, seed=42, corpus_hash=corpus_hash)
+
+    payload_a = write_evidence_bundle(
+        tmp_path / "a.json", items, corpus_hash=corpus_hash, generated_at="t0", seed=42
+    )
+    payload_b = write_evidence_bundle(
+        tmp_path / "b.json", list(reversed(items)), corpus_hash=corpus_hash, generated_at="t1", seed=99
+    )
+    assert payload_a["bundle_hash"] == payload_b["bundle_hash"]  # same item set, different order/metadata
+
+    payload_c = write_evidence_bundle(
+        tmp_path / "c.json", items[:-1], corpus_hash=corpus_hash, generated_at="t0", seed=42
+    )
+    assert payload_a["bundle_hash"] != payload_c["bundle_hash"]  # fewer items -> different hash
+
+
 def _one_item(records=None):
     records = records or storage.load_corpus(REAL_CORPUS)
     corpus_hash = storage.corpus_hash(records)

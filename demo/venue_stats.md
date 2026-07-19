@@ -14,7 +14,7 @@ venue-year so far — that's a corpus limitation, not a bug in the `all`-aggrega
 
 Schema version: 1  
 Source corpus hash: `9222deb94e5619fc`  
-Generated at: 2026-07-18T23:56:36Z
+Generated at: 2026-07-19T00:00:57Z
 
 Deterministic output of `paperscope stats` — see
 [`docs/statistics_and_evidence.md`](../docs/statistics_and_evidence.md) for schema and
@@ -37,6 +37,7 @@ causal — see the row's `note` field in `statistics.json`.
 | missing_rate.review_rating | 37 | 0 | 0.0 |
 | paper_mean_rating | 10 | 0 | {"count": 10, "max": 6.5, "mean": 4.3333, "median": 4.0, "min": 2.0, "stdev": 1.3354} |
 | paper_rating_variance | 10 | 0 | {"count": 10, "max": 2.75, "mean": 1.4389, "median": 1.5, "min": 0.0, "stdev": 0.9597} |
+| rating_decision_crosstab | 37 | 0 | {"unknown": {"high": 12, "low": 8, "medium": 17}} |
 | rating_distribution_normalized | 37 | 0 | {"0.0-0.1": 8, "0.1-0.2": 0, "0.2-0.3": 0, "0.3-0.4": 17, "0.4-0.5": 0, "0.5-0.6": 0, "0.6-0.7": 8, "0.7-0.8": 0, "0.8-0.9": 0, "0.9-1.0": 4} |
 | rating_distribution_raw | 37 | 0 | {"2.0": 8, "4.0": 17, "6.0": 8, "8.0": 4} |
 | rebuttal_absent_rating_change *(observational)* | 8 | 8 | {"count": 0, "max": null, "mean": null, "median": null, "min": null, "stdev": null} |
@@ -61,6 +62,7 @@ causal — see the row's `note` field in `statistics.json`.
 | missing_rate.review_rating | 37 | 0 | 0.0 |
 | paper_mean_rating | 10 | 0 | {"count": 10, "max": 6.5, "mean": 4.3333, "median": 4.0, "min": 2.0, "stdev": 1.3354} |
 | paper_rating_variance | 10 | 0 | {"count": 10, "max": 2.75, "mean": 1.4389, "median": 1.5, "min": 0.0, "stdev": 0.9597} |
+| rating_decision_crosstab | 37 | 0 | {"unknown": {"high": 12, "low": 8, "medium": 17}} |
 | rating_distribution_normalized | 37 | 0 | {"0.0-0.1": 8, "0.1-0.2": 0, "0.2-0.3": 0, "0.3-0.4": 17, "0.4-0.5": 0, "0.5-0.6": 0, "0.6-0.7": 8, "0.7-0.8": 0, "0.8-0.9": 0, "0.9-1.0": 4} |
 | rating_distribution_raw | 37 | 0 | {"2.0": 8, "4.0": 17, "6.0": 8, "8.0": 4} |
 | rebuttal_absent_rating_change *(observational)* | 8 | 8 | {"count": 0, "max": null, "mean": null, "median": null, "min": null, "stdev": null} |

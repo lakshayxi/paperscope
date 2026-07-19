@@ -337,9 +337,13 @@ def validate_evidence_bundle(
 def write_evidence_bundle(
     path: Path, items: list[EvidenceItem], *, corpus_hash: str, generated_at: str, seed: int
 ) -> dict:
+    # bundle-level integrity hash, distinct from each item's per-excerpt corpus_hash --
+    # changes if the selected set of evidence IDs changes, independent of item ordering.
+    bundle_hash = content_hash(*sorted(i.evidence_id for i in items))
     payload = {
         "schema_version": EVIDENCE_SCHEMA_VERSION,
         "corpus_hash": corpus_hash,
+        "bundle_hash": bundle_hash,
         "generated_at": generated_at,
         "seed": seed,
         "count": len(items),
