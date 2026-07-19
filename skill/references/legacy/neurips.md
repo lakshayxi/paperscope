@@ -1,3 +1,7 @@
+> **ARCHIVAL -- NOT LOADED AT RUNTIME.** This file predates the Phase 4A skill redesign and is hand-written, unvalidated prose -- it was never checked against the structured claim schema (`generation.py`) that every current `references/<family>.md` file now passes through. It contains claims this project no longer stands behind verbatim, including unqualified "actual distribution" and "area-chair-level experience" framing. Kept only for historical continuity per the project's no-delete policy -- see `skill/references/legacy/README.md`. The active skill (`skill/SKILL.md`) never loads anything from this directory.
+
+---
+
 # NeurIPS Review Calibration
 *Calibrated from OpenReview patterns 2023–2025*
 
