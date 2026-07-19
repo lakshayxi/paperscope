@@ -1,0 +1,39 @@
+{
+  "content": {
+    "claims_hash": "bc2d8a12c437b2c4",
+    "corpus_hash": "9222deb94e5619fc",
+    "evidence_bundle_hash": "905789d9836bb2de",
+    "paperscope_version": "0.1.0",
+    "skill_schema_version": 1,
+    "source_schema_versions": {
+      "evidence": 1,
+      "generation": 1,
+      "stats": 1
+    },
+    "statistics_hash": "55af9c78ce6eb0b6",
+    "supported_venue_families": [
+      "iclr"
+    ],
+    "unsupported_mode": "generic_uncalibrated",
+    "venues": {
+      "iclr": {
+        "aliases": [
+          "International Conference on Learning Representations"
+        ],
+        "claim_count": 10,
+        "decisions_resolved": 0,
+        "evidence_count": 27,
+        "forum_count": 10,
+        "preliminary": true,
+        "reference": "references/iclr.md",
+        "reference_hash": "e37d9fafc346df6e",
+        "review_count": 37,
+        "years_covered": [
+          2026
+        ]
+      }
+    }
+  },
+  "content_hash": "7f7694c73aa257d5",
+  "generated_at": "2026-07-19T18:34:27Z"
+}
