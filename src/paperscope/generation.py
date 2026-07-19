@@ -433,6 +433,9 @@ _CLAIM_TYPE_LABELS = {
     "llm_interpretation": "Model interpretation",
     "insufficient_evidence": "Insufficient evidence",
 }
+# Public alias -- skill_builder.py's per-family renderer reuses these labels rather than
+# redefining them, so the two renderers can't silently drift apart.
+CLAIM_TYPE_LABELS = _CLAIM_TYPE_LABELS
 
 
 def render_markdown(claims_payload: dict, statistics_payload: dict, evidence_payload: dict) -> str:

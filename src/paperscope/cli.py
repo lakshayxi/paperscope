@@ -11,6 +11,7 @@ from pathlib import Path
 from paperscope import evidence as evidence_mod
 from paperscope import generation as generation_mod
 from paperscope import refresh_policy as refresh_policy_mod
+from paperscope import skill_builder as skill_builder_mod
 from paperscope import statistics as statistics_mod
 from paperscope import storage
 from paperscope.config import (
@@ -284,6 +285,28 @@ def cmd_generate(args) -> None:
     print(f"wrote {claims_path}")
 
 
+def cmd_build_skill(args) -> None:
+    try:
+        manifest = skill_builder_mod.build_skill(
+            claims_path=Path(args.claims),
+            statistics_path=Path(args.statistics),
+            evidence_path=Path(args.evidence),
+            output_dir=Path(args.output),
+        )
+    except (OSError, ValueError) as e:
+        sys.exit(f"build-skill failed: {e}")
+    print(f"wrote skill to {args.output} (content_hash={manifest['content_hash']})")
+
+
+def cmd_validate_skill(args) -> None:
+    report = skill_builder_mod.validate_skill(Path(args.path))
+    if not report.ok:
+        for violation in report.violations:
+            print(f"  - {violation}")
+        sys.exit(f"validate-skill failed: {len(report.violations)} violation(s)")
+    print(f"skill at {args.path} is valid")
+
+
 def cmd_discover(args) -> None:
     client = get_client(args.api_version)
     inv = discover_review_invitation(client, args.venue_id, args.api_version)
@@ -377,6 +400,19 @@ def build_parser() -> argparse.ArgumentParser:
     generate_p.add_argument("--max-tokens", type=int, default=4096)
     generate_p.add_argument("--temperature", type=float, default=0.0)
     generate_p.set_defaults(func=cmd_generate)
+
+    build_skill_p = sub.add_parser(
+        "build-skill", help="Build a validated PaperScope skill from Phase 3 claims/statistics/evidence"
+    )
+    build_skill_p.add_argument("--claims", required=True, help="Path to a validated claims.json")
+    build_skill_p.add_argument("--statistics", required=True, help="Path to the statistics.json the claims were grounded in")
+    build_skill_p.add_argument("--evidence", required=True, help="Path to the evidence bundle the claims were grounded in")
+    build_skill_p.add_argument("--output", required=True, help="Output skill directory (e.g. skill/)")
+    build_skill_p.set_defaults(func=cmd_build_skill)
+
+    validate_skill_p = sub.add_parser("validate-skill", help="Validate a built PaperScope skill directory")
+    validate_skill_p.add_argument("--path", required=True, help="Path to a skill directory built by build-skill")
+    validate_skill_p.set_defaults(func=cmd_validate_skill)
 
     return parser
 

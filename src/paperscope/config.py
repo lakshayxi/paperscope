@@ -105,6 +105,11 @@ DEFAULT_EVIDENCE_PER_BUCKET = 4
 # render workflow).
 GENERATION_SCHEMA_VERSION = 1
 
+# Phase 4A -- skill_builder.py. SKILL_NAME must match the generated skill directory's
+# SKILL.md `name:` frontmatter field exactly (see docs on Agent Skills naming rules).
+SKILL_SCHEMA_VERSION = 1
+SKILL_NAME = "paperscope-reviewer"
+
 
 def is_active_cycle_venue(venue_family: str, venue_year: int | None) -> bool:
     """True if this family/year pair is one of the venues currently in an active review
