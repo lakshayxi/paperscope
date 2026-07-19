@@ -46,18 +46,49 @@ would let the system see its own answer key. `prepare-eval` therefore:
 i.e. you can point it directly at the `evidence.json` a venue's skill calibration was
 built from).
 
+### What actually guarantees no leakage
+
+In order of strength, these four hold regardless of any other code in this module:
+
+1. **Closed model-input schema** — `ModelInput` has exactly forum_id/venue_family/
+   venue_year/title/abstract/input_tier/schema_version. There is no review, rating,
+   decision, or rebuttal field on the dataclass at all, so nothing there can leak
+   through it by construction.
+2. **Separate private labels** — targets live only in `private_labels.jsonl`, a file
+   never written into or merged with anything model-visible.
+3. **Forum-level disjointness** — calibration and evaluation forum-ID sets are computed
+   to be disjoint by construction (calibration is subtracted out before evaluation
+   forums are even considered) and re-checked from the files on disk at validate time.
+4. **Hash validation** — `model_inputs_hash`/`private_labels_hash`/`calibration_hash`
+   are recomputed from the actual files on disk and compared against the recorded
+   manifest values, so a stale or hand-edited file is caught rather than trusted.
+
+`check_no_review_leakage` (run automatically inside `prepare-eval`) is a **supplemental**
+safeguard on top of the above, not an independent guarantee — it greps each forum's own
+review/response/decision text for a long, literal substring match against that same
+forum's title/abstract. That catches an accidental literal copy-paste (e.g. a future bug
+that pipes review text into `Paper.abstract`), but it cannot detect a paraphrase, a
+translation, or a leak arriving through a field this function doesn't know to check. A
+clean result from it means "no obvious copy-paste leak was found", not "no leakage is
+possible" — the four guarantees above are what actually make that claim.
+
 ## Dataset outputs (`prepare-eval`)
 
 | File | Contents |
 |---|---|
 | `model_inputs.jsonl` | One row per evaluation forum: `forum_id`, `venue_family`, `venue_year`, `title`, `abstract`, `input_tier` (always `"abstract_only"` today — the corpus schema has no full-text field yet), `schema_version`. **No other field can ever appear here** — `ModelInput` is a closed dataclass with exactly these fields. |
 | `private_labels.jsonl` | One row per evaluation forum with **both** tasks' targets and eligibility, never intended for model context: `initial_rating_target`/`initial_rating_aggregation`/`initial_rating_n`/`initial_rating_eligible`, `final_decision_target`/`final_decision_raw`/`final_decision_eligible`/`final_decision_excluded_reason`. |
-| `split_manifest.json` | `seed`, `corpus_hash`, `calibration_hash`, the frozen `calibration_forum_ids` list, `eval_forum_count`, `exclusions` (forum_id + reason), `exclusion_counts`, per-venue/year `stratification` for both sets. |
+| `split_manifest.json` | `seed`, `max_forums`, `corpus_hash`, `calibration_hash`, the frozen `calibration_forum_ids` list, `eval_forum_count`, `exclusions` (forum_id + reason), `exclusion_counts`, per-venue/year `stratification` for both sets. |
 | `evaluation_manifest.json` | `schema_version`, `seed`, `corpus_hash`, `calibration_hash`, `model_inputs_hash`, `private_labels_hash`, `eval_forum_count`, and each task's `target_definition` + `eligible_forum_count`. This is what `evaluate`/`validate-eval` check saved predictions against. |
 
-No random sampling happens — every eligible non-calibration forum is included, so output
-is deterministic by construction (`seed` is recorded for provenance and forward
-compatibility, e.g. a future version that adds stratified downsampling).
+By default (`--max-forums` unset) no random sampling happens at all — every eligible
+non-calibration forum is included, and `seed` is recorded purely for provenance. Passing
+`--max-forums N` caps the evaluation set at `N` forums via `_stratified_subsample`:
+deterministic, venue/year-stratified (largest-remainder proportional quota per stratum,
+then `random.Random(seed).sample()` within each stratum) — same seed + inputs always
+produces the same subset; a different seed generally produces a different one. Forums
+dropped by subsampling are recorded in `split_manifest.json`'s `exclusions` with reason
+`subsampled_out`, same as any other exclusion reason.
 
 ### Exclusion reasons
 

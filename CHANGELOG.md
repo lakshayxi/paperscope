@@ -2,6 +2,27 @@
 
 ## Unreleased
 
+### Fixed
+- `paperscope prepare-eval --max-forums N`: `--seed` was previously recorded but had no
+  effect (a no-op reproducibility parameter). Added deterministic, venue/year-stratified
+  subsampling (`_stratified_subsample`, largest-remainder proportional quota per stratum)
+  that actually uses it -- default behavior (no `--max-forums`) is unchanged, a true
+  no-op with every eligible forum included. Forums dropped by subsampling are recorded
+  in `split_manifest.json`'s `exclusions` with reason `subsampled_out`.
+- `compute_reviewer_aggregate_baseline`'s majority-decision tie-break iterated
+  `calibration_forum_ids` (a `set`) and picked `max(decision_counts, ...)` directly --
+  both are sensitive to Python's per-process hash-randomized set iteration order, so an
+  exact accept/reject tie among calibration forums could resolve differently across
+  process runs even with identical inputs. Fixed to iterate calibration IDs in sorted
+  order and break ties alphabetically, deterministic regardless of hash seed (see
+  `test_reviewer_aggregate_baseline_majority_decision_tie_break_is_deterministic`,
+  which caught this while regenerating `demo/eval/`'s fixtures a second time).
+- Docs (`docs/evaluation.md`) and code comments reframed `check_no_review_leakage` as an
+  explicitly supplemental, literal-substring safeguard, not a primary guarantee -- the
+  actual leakage guarantees are the closed `ModelInput` schema, the separate
+  `private_labels.jsonl` file, forum-level calibration/evaluation disjointness, and hash
+  validation against the files on disk.
+
 ### Added
 - `paperscope prepare-eval` / `paperscope validate-eval` / `paperscope evaluate`
   (`src/paperscope/evaluation.py`, Phase 4B): a leakage-safe, fully offline evaluation

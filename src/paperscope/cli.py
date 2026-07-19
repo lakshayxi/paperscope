@@ -320,6 +320,7 @@ def cmd_prepare_eval(args) -> None:
             calibration_forums_path=Path(args.calibration_forums),
             output_dir=Path(args.output),
             seed=args.seed,
+            max_forums=args.max_forums,
         )
     except evaluation_mod.EvaluationDatasetError as e:
         sys.exit(f"prepare-eval failed: {e}")
@@ -476,7 +477,11 @@ def build_parser() -> argparse.ArgumentParser:
                                       "(frozen before evaluation forums are selected)")
     prepare_eval_p.add_argument("--output", required=True, help="Output directory for the evaluation dataset")
     prepare_eval_p.add_argument("--seed", type=int, default=DEFAULT_SEED,
-                                 help=f"Seed recorded for reproducibility (default: {DEFAULT_SEED})")
+                                 help=f"Seed for deterministic subsampling when --max-forums is set, and for "
+                                      f"reproducibility provenance otherwise (default: {DEFAULT_SEED})")
+    prepare_eval_p.add_argument("--max-forums", type=int, default=None,
+                                 help="Cap the evaluation set at this many forums via seeded, venue/year-"
+                                      "stratified subsampling. Default: no cap -- every eligible forum is included.")
     prepare_eval_p.set_defaults(func=cmd_prepare_eval)
 
     validate_eval_p = sub.add_parser(

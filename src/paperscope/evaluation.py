@@ -14,12 +14,21 @@ Three ideas run through every function here:
    inseparable unit; if a forum is used for calibration, it is never in the evaluation
    set, and vice versa. `select_evaluation_forums` enforces this and `validate_dataset`
    re-derives the split from the frozen calibration ID list to catch tampering.
-2. **Model-visible content is a closed schema.** `ModelInput` has exactly
-   forum_id/venue_family/venue_year/title/abstract/input_tier/schema_version -- no
-   review text, rating, decision, or rebuttal field exists on the dataclass at all, so
-   there is no field to accidentally leak through. `check_no_review_leakage` is a
-   second, independent check: it greps each forum's own review/response/decision text
-   against its own title+abstract as a build-time safety net, not the primary control.
+2. **Model-visible content is a closed schema.** The real leakage guarantees are, in
+   order: `ModelInput` has exactly forum_id/venue_family/venue_year/title/abstract/
+   input_tier/schema_version -- no review, rating, decision, or rebuttal field exists on
+   the dataclass at all, so there is nothing to leak through it by construction; labels
+   live only in the separate `private_labels.jsonl`, never merged into model-visible
+   files; `select_evaluation_forums`/`validate_dataset_consistency` enforce forum-level
+   calibration/evaluation disjointness; and every hash (`model_inputs_hash`,
+   `private_labels_hash`, `calibration_hash`) is re-derived from disk at validate time,
+   so a tampered or stale file is caught. `check_no_review_leakage` is a **supplemental**
+   safeguard on top of all of that, not a guarantee in its own right: it greps each
+   forum's own review/response/decision text against its own title+abstract, which only
+   catches a *literal, long substring* copy -- e.g. a future bug that pipes review text
+   into `Paper.abstract` -- and would miss a paraphrase, a translation, or a leak that
+   arrived through some field this schema doesn't yet have. Treat a clean result from it
+   as "no obvious copy-paste leak found", not as "no leakage is possible".
 3. **Every violation is collected, not just the first.** Matching `evidence.py` and
    `generation.py`'s validation style: `*ValidationError` messages list every problem
    found in one payload, and `run_leakage_validation` collects across dataset
@@ -30,6 +39,7 @@ Three ideas run through every function here:
 from __future__ import annotations
 
 import json
+import random
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -207,13 +217,80 @@ class SplitResult:
     exclusions: list[dict]  # [{"forum_id":..., "reason":...}]
 
 
+def _stratified_subsample(
+    eval_ids: list[str], records: dict[str, ForumRecord], *, max_forums: int, seed: int
+) -> list[str]:
+    """Deterministically subsamples `eval_ids` down to `max_forums`, stratified by
+    `(venue_family, venue_year)` -- proportional quota per stratum via the largest-
+    remainder method, then a seeded `random.Random(seed).sample()` within each stratum.
+    Same `eval_ids` + `records` + `max_forums` + `seed` always produces the same subset;
+    a different seed generally produces a different one (see
+    `test_stratified_subsample_differs_for_different_seed`), except in the degenerate
+    case where every stratum's quota equals its full size.
+    """
+    if max_forums >= len(eval_ids):
+        return list(eval_ids)
+    if max_forums <= 0:
+        return []
+
+    by_stratum: dict[tuple[str, int | str], list[str]] = {}
+    for fid in eval_ids:
+        key = (records[fid].venue_family or "unknown", _venue_year_key(records[fid]))
+        by_stratum.setdefault(key, []).append(fid)
+    strata = sorted(by_stratum, key=lambda k: (k[0], str(k[1])))
+    total = len(eval_ids)
+
+    quotas: dict[tuple[str, int | str], int] = {}
+    fractional: dict[tuple[str, int | str], float] = {}
+    remaining = max_forums
+    for k in strata:
+        share = len(by_stratum[k]) * max_forums / total
+        quotas[k] = min(int(share), len(by_stratum[k]))
+        fractional[k] = share - int(share)
+        remaining -= quotas[k]
+
+    for k in sorted(strata, key=lambda k: (-fractional[k], k)):
+        if remaining <= 0:
+            break
+        if quotas[k] < len(by_stratum[k]):
+            quotas[k] += 1
+            remaining -= 1
+
+    # Largest-remainder rounding can leave seats unassigned only when every stratum is
+    # already at capacity relative to its share -- sweep strata in stable order until
+    # either the budget is exhausted or every stratum is fully saturated.
+    while remaining > 0:
+        progressed = False
+        for k in strata:
+            if remaining <= 0:
+                break
+            if quotas[k] < len(by_stratum[k]):
+                quotas[k] += 1
+                remaining -= 1
+                progressed = True
+        if not progressed:
+            break
+
+    rng = random.Random(seed)
+    selected: list[str] = []
+    for k in strata:
+        selected.extend(rng.sample(sorted(by_stratum[k]), quotas[k]))
+    return sorted(selected)
+
+
 def select_evaluation_forums(
-    records: dict[str, ForumRecord], calibration_forum_ids: set[str]
+    records: dict[str, ForumRecord],
+    calibration_forum_ids: set[str],
+    *,
+    max_forums: int | None = None,
+    seed: int = 0,
 ) -> SplitResult:
     """Selects the evaluation forum set from `records`, deduplicated by construction
     (`records` is already keyed by forum_id). A forum is excluded, in priority order, for:
-    being in the frozen calibration set, having no usable label for either task, or having
-    no title/abstract to show a model at all. Never overlaps `calibration_forum_ids` --
+    being in the frozen calibration set, having no usable label for either task, having
+    no title/abstract to show a model at all, or (only when `max_forums` is set and the
+    eligible pool exceeds it) being dropped by seeded, venue/year-stratified subsampling
+    -- see `_stratified_subsample`. Never overlaps `calibration_forum_ids` --
     `prepare_eval` asserts this again after the fact as defense-in-depth.
     """
     eval_ids: list[str] = []
@@ -233,14 +310,25 @@ def select_evaluation_forums(
             continue
         eval_ids.append(forum_id)
 
+    if max_forums is not None and len(eval_ids) > max_forums:
+        kept = set(_stratified_subsample(eval_ids, records, max_forums=max_forums, seed=seed))
+        dropped = [fid for fid in eval_ids if fid not in kept]
+        exclusions.extend({"forum_id": fid, "reason": "subsampled_out"} for fid in dropped)
+        eval_ids = sorted(kept)
+
     return SplitResult(eval_forum_ids=eval_ids, exclusions=exclusions)
 
 
 def check_no_review_leakage(records: dict[str, ForumRecord], model_inputs: list[ModelInput]) -> list[str]:
-    """Greps each forum's own review/response/decision text against its own visible
-    title+abstract. A real leak (e.g. a future bug that pipes review text into `Paper`)
-    would show up as a long, literal substring match -- short common phrases are not
-    checked (`_MIN_LEAK_LEN`) to avoid false positives on generic wording.
+    """Supplemental safeguard, not the primary guarantee -- see the module docstring's
+    point 2. Greps each forum's own review/response/decision text against its own
+    visible title+abstract. A real leak (e.g. a future bug that pipes review text into
+    `Paper`) would show up as a long, literal substring match -- short common phrases
+    are not checked (`_MIN_LEAK_LEN`) to avoid false positives on generic wording. This
+    catches literal copy-paste only; it cannot detect a paraphrase or a leak through a
+    field this function doesn't know to check. The actual guarantees are the closed
+    `ModelInput` schema, the separate `private_labels.jsonl` file, forum-level
+    calibration/evaluation disjointness, and hash validation against the files on disk.
     """
     _MIN_LEAK_LEN = 25
     errors: list[str] = []
@@ -284,7 +372,11 @@ def compute_reviewer_aggregate_baseline(
     aggregate from), since a baseline built from zero calibration forums as if it means
     something would be worse than no baseline at all.
     """
-    calibration_records = [records[fid] for fid in calibration_forum_ids if fid in records]
+    # sorted(): calibration_forum_ids is a `set`, whose iteration order is hash-randomized
+    # per process (PYTHONHASHSEED) -- iterating it directly would make mean_rating's
+    # summation order (and, more seriously, majority_decision's tie-break below)
+    # non-deterministic across runs even with the same seed and inputs.
+    calibration_records = [records[fid] for fid in sorted(calibration_forum_ids) if fid in records]
     if not calibration_records:
         return None
 
@@ -301,7 +393,11 @@ def compute_reviewer_aggregate_baseline(
         normalized = record.decision.normalized or ""
         if normalized in RESOLVED_DECISIONS:
             decision_counts[normalized] = decision_counts.get(normalized, 0) + 1
-    majority_decision = max(decision_counts, key=decision_counts.get) if decision_counts else None
+    # sorted(decision_counts): breaks a count tie deterministically (alphabetically)
+    # instead of by whatever order max() happens to see dict keys in.
+    majority_decision = (
+        max(sorted(decision_counts), key=lambda d: decision_counts[d]) if decision_counts else None
+    )
 
     predictions = [
         {
@@ -361,6 +457,7 @@ def prepare_eval(
     calibration_forums_path: Path,
     output_dir: Path,
     seed: int,
+    max_forums: int | None = None,
     generated_at: str | None = None,
 ) -> dict:
     """Builds a leakage-safe evaluation dataset at `output_dir`. Freezes the calibration
@@ -368,18 +465,22 @@ def prepare_eval(
     -- the calibration set comes from an external, already-produced file (e.g. the
     evidence bundle a venue's skill calibration was built from), so this ordering can't
     be gamed by picking eval forums first and calling the leftovers "calibration".
-    Deterministic for the same seed + inputs: no random sampling happens (every eligible
-    non-calibration forum is included), `seed` is recorded for reproducibility and future
-    extensibility, and every list is written in sorted order.
+    Deterministic for the same seed + inputs: every list is written in sorted order, and
+    when `max_forums` triggers `_stratified_subsample`, `seed` is what makes the exact
+    same subset come out again on a repeat run. Without `max_forums` (the default), no
+    random sampling happens at all -- every eligible non-calibration forum is included,
+    and `seed` is recorded purely for provenance/forward compatibility.
     """
     records = load_corpus(Path(corpus_path))
     if not records:
         raise EvaluationDatasetError(f"no records found in corpus {corpus_path}")
+    if max_forums is not None and max_forums <= 0:
+        raise EvaluationDatasetError(f"max_forums must be positive, got {max_forums}")
 
     calibration_forum_ids = load_calibration_forum_ids(Path(calibration_forums_path))
     calibration_hash = freeze_calibration_hash(calibration_forum_ids)
 
-    split = select_evaluation_forums(records, calibration_forum_ids)
+    split = select_evaluation_forums(records, calibration_forum_ids, max_forums=max_forums, seed=seed)
     if not split.eval_forum_ids:
         raise EvaluationDatasetError(
             "no evaluation forums remain after excluding the calibration set and forums "
@@ -417,6 +518,7 @@ def prepare_eval(
     split_manifest = {
         "schema_version": EVALUATION_SCHEMA_VERSION,
         "seed": seed,
+        "max_forums": max_forums,
         "corpus_hash": src_corpus_hash,
         "calibration_hash": calibration_hash,
         "calibration_forum_ids": sorted(calibration_forum_ids),

@@ -174,6 +174,153 @@ def test_calibration_hash_is_frozen_and_reproducible():
     assert ev.freeze_calibration_hash(ids_a) != ev.freeze_calibration_hash(different)
 
 
+# --------------------------------------------------------------------------------------
+# --max-forums: seeded, venue/year-stratified subsampling (makes --seed load-bearing)
+# --------------------------------------------------------------------------------------
+
+
+def _large_diverse_corpus() -> dict[str, ForumRecord]:
+    """30 eligible forums across three strata (iclr/2025 x15, iclr/2024 x10,
+    neurips/2025 x5) -- enough for proportional stratification to be checkable."""
+    records = {}
+    for i in range(15):
+        fid = f"a{i:02d}"
+        records[fid] = _forum(fid, family="iclr", year=2025, decision="accept", reviews=[_review(f"{fid}_r1", 6.0)])
+    for i in range(10):
+        fid = f"b{i:02d}"
+        records[fid] = _forum(fid, family="iclr", year=2024, decision="reject", reviews=[_review(f"{fid}_r1", 4.0)])
+    for i in range(5):
+        fid = f"c{i:02d}"
+        records[fid] = _forum(fid, family="neurips", year=2025, decision="accept", reviews=[_review(f"{fid}_r1", 7.0)])
+    return records
+
+
+@pytest.fixture
+def large_corpus_path(tmp_path):
+    path = tmp_path / "large_corpus.jsonl"
+    storage.save_full_corpus(path, _large_diverse_corpus())
+    return path
+
+
+@pytest.fixture
+def empty_calibration_path(tmp_path):
+    # An empty-but-valid calibration set that shares no IDs with _large_diverse_corpus,
+    # via a single forum_id no corpus in this file ever generates.
+    path = tmp_path / "cal_none.json"
+    path.write_text(json.dumps(["not-in-any-corpus"]))
+    return path
+
+
+def test_max_forums_caps_the_evaluation_set_size(tmp_path, large_corpus_path, empty_calibration_path):
+    out_dir = tmp_path / "capped"
+    manifest = ev.prepare_eval(
+        corpus_path=large_corpus_path, calibration_forums_path=empty_calibration_path,
+        output_dir=out_dir, seed=42, max_forums=10,
+    )
+    assert manifest["eval_forum_count"] == 10
+    rows = [json.loads(line) for line in (out_dir / "model_inputs.jsonl").read_text().splitlines()]
+    assert len(rows) == 10
+
+
+def test_max_forums_subsampling_is_stratified_proportionally(tmp_path, large_corpus_path, empty_calibration_path):
+    out_dir = tmp_path / "capped"
+    ev.prepare_eval(
+        corpus_path=large_corpus_path, calibration_forums_path=empty_calibration_path,
+        output_dir=out_dir, seed=42, max_forums=10,
+    )
+    rows = [json.loads(line) for line in (out_dir / "model_inputs.jsonl").read_text().splitlines()]
+    ids = {r["forum_id"] for r in rows}
+    # 30 total (15/10/5) capped to 10 -> proportional shares are 5/3.33/1.67, so expect
+    # roughly 5 from iclr/2025, 3 from iclr/2024, 2 from neurips/2025 (largest-remainder).
+    assert sum(1 for fid in ids if fid.startswith("a")) == 5
+    assert sum(1 for fid in ids if fid.startswith("b")) == 3
+    assert sum(1 for fid in ids if fid.startswith("c")) == 2
+
+
+def test_max_forums_deterministic_for_same_seed(tmp_path, large_corpus_path, empty_calibration_path):
+    out_a = tmp_path / "a"
+    out_b = tmp_path / "b"
+    ev.prepare_eval(corpus_path=large_corpus_path, calibration_forums_path=empty_calibration_path,
+                     output_dir=out_a, seed=7, max_forums=10)
+    ev.prepare_eval(corpus_path=large_corpus_path, calibration_forums_path=empty_calibration_path,
+                     output_dir=out_b, seed=7, max_forums=10)
+    assert (out_a / "model_inputs.jsonl").read_text() == (out_b / "model_inputs.jsonl").read_text()
+
+
+def test_max_forums_differs_for_different_seed(tmp_path, large_corpus_path, empty_calibration_path):
+    out_a = tmp_path / "a"
+    out_b = tmp_path / "b"
+    ev.prepare_eval(corpus_path=large_corpus_path, calibration_forums_path=empty_calibration_path,
+                     output_dir=out_a, seed=1, max_forums=10)
+    ev.prepare_eval(corpus_path=large_corpus_path, calibration_forums_path=empty_calibration_path,
+                     output_dir=out_b, seed=2, max_forums=10)
+    assert (out_a / "model_inputs.jsonl").read_text() != (out_b / "model_inputs.jsonl").read_text()
+
+
+def test_max_forums_dropped_forums_recorded_as_exclusions(tmp_path, large_corpus_path, empty_calibration_path):
+    out_dir = tmp_path / "capped"
+    ev.prepare_eval(corpus_path=large_corpus_path, calibration_forums_path=empty_calibration_path,
+                     output_dir=out_dir, seed=42, max_forums=10)
+    split = json.loads((out_dir / "split_manifest.json").read_text())
+    subsampled = [e for e in split["exclusions"] if e["reason"] == "subsampled_out"]
+    assert len(subsampled) == 20
+    assert split["max_forums"] == 10
+
+
+def test_max_forums_unset_is_a_true_no_op(tmp_path, large_corpus_path, empty_calibration_path):
+    """Default behavior (no --max-forums) must be byte-identical to before this feature
+    existed: every eligible forum included, no subsampling exclusions."""
+    out_dir = tmp_path / "uncapped"
+    manifest = ev.prepare_eval(corpus_path=large_corpus_path, calibration_forums_path=empty_calibration_path,
+                                output_dir=out_dir, seed=42)
+    assert manifest["eval_forum_count"] == 30
+    split = json.loads((out_dir / "split_manifest.json").read_text())
+    assert split["max_forums"] is None
+    assert not any(e["reason"] == "subsampled_out" for e in split["exclusions"])
+
+
+def test_max_forums_larger_than_eligible_pool_is_a_no_op(tmp_path, large_corpus_path, empty_calibration_path):
+    out_dir = tmp_path / "uncapped"
+    manifest = ev.prepare_eval(corpus_path=large_corpus_path, calibration_forums_path=empty_calibration_path,
+                                output_dir=out_dir, seed=42, max_forums=1000)
+    assert manifest["eval_forum_count"] == 30
+
+
+def test_max_forums_must_be_positive(tmp_path, large_corpus_path, empty_calibration_path):
+    with pytest.raises(ev.EvaluationDatasetError):
+        ev.prepare_eval(corpus_path=large_corpus_path, calibration_forums_path=empty_calibration_path,
+                         output_dir=tmp_path / "out", seed=42, max_forums=0)
+
+
+def test_stratified_subsample_never_exceeds_a_strata_size():
+    # A degenerate stratum distribution (one huge stratum, one tiny one) to make sure
+    # largest-remainder rounding never asks a stratum for more than it has.
+    records = _large_diverse_corpus()
+    eval_ids = sorted(records)
+    subset = ev._stratified_subsample(eval_ids, records, max_forums=29, seed=1)
+    assert len(subset) == 29
+    assert len(set(subset)) == 29  # no duplicates
+    assert set(subset) <= set(eval_ids)
+
+
+def test_max_forums_cli_flag_parses():
+    from paperscope.cli import build_parser
+
+    args = build_parser().parse_args(
+        ["prepare-eval", "--corpus", "c.jsonl", "--calibration-forums", "cal.json", "--output", "out", "--max-forums", "25"]
+    )
+    assert args.max_forums == 25
+
+
+def test_max_forums_cli_flag_defaults_to_none():
+    from paperscope.cli import build_parser
+
+    args = build_parser().parse_args(
+        ["prepare-eval", "--corpus", "c.jsonl", "--calibration-forums", "cal.json", "--output", "out"]
+    )
+    assert args.max_forums is None
+
+
 def test_split_manifest_records_calibration_hash_reproducibly_from_forum_ids(
     tmp_path, diverse_corpus_path, calibration_forums_path
 ):
@@ -675,8 +822,10 @@ def test_reviewer_aggregate_baseline_uses_only_calibration_aggregates(tmp_path, 
     eval_ids = sorted(set(records) - calibration_ids)
     baseline = ev.compute_reviewer_aggregate_baseline(records, calibration_ids, eval_ids)
     assert baseline is not None
-    # c01 rating=7.0, c02 rating=2.0 -> mean 4.5; both accept/reject once each -> majority is either (tie-break by max())
+    # c01 rating=7.0, c02 rating=2.0 -> mean 4.5; c01=accept, c02=reject -> tied 1-1,
+    # resolved deterministically (alphabetically) -- see test below for the dedicated check.
     assert baseline["run"]["settings"]["mean_initial_rating"] == pytest.approx(4.5)
+    assert baseline["run"]["settings"]["majority_decision"] == "accept"
     predicted_ids = {p["forum_id"] for p in baseline["predictions"]}
     assert predicted_ids == set(eval_ids)
     # Every eval forum gets the SAME constant prediction -- never its own true label.
@@ -687,6 +836,35 @@ def test_reviewer_aggregate_baseline_none_when_calibration_forums_absent_from_co
     records = _diverse_corpus()
     baseline = ev.compute_reviewer_aggregate_baseline(records, {"not-in-corpus"}, list(records))
     assert baseline is None
+
+
+def test_reviewer_aggregate_baseline_majority_decision_tie_break_is_deterministic():
+    """Regression test: `calibration_forum_ids` is a `set`, and building `decision_counts`
+    by iterating a set directly (the pre-fix implementation) makes a tied majority_decision
+    depend on Python's per-process hash-randomized set iteration order -- passing this
+    test in one process proves nothing about another process. Instead this pins the
+    documented tie-break contract directly: `max(sorted(decision_counts), ...)` always
+    resolves an exact tie to whichever decision sorts first alphabetically ("accept").
+    """
+    records = {
+        "cal_a": _forum("cal_a", decision="accept", reviews=[_review("cal_a_r1", 5.0)]),
+        "cal_b": _forum("cal_b", decision="reject", reviews=[_review("cal_b_r1", 5.0)]),
+    }
+    for _ in range(20):
+        baseline = ev.compute_reviewer_aggregate_baseline(records, {"cal_a", "cal_b"}, ["e1"])
+        assert baseline["run"]["settings"]["majority_decision"] == "accept"
+
+
+def test_reviewer_aggregate_baseline_iterates_calibration_ids_in_sorted_order():
+    # Two `set` literals containing the same elements can iterate in different orders
+    # across process runs; sorted() inside the function is what makes the result
+    # independent of that -- assert equal results regardless of construction order.
+    records = _diverse_corpus()
+    ids_a = {"c01", "c02"}
+    ids_b = {"c02", "c01"}
+    baseline_a = ev.compute_reviewer_aggregate_baseline(records, ids_a, ["eval_only"])
+    baseline_b = ev.compute_reviewer_aggregate_baseline(records, ids_b, ["eval_only"])
+    assert baseline_a["run"]["settings"] == baseline_b["run"]["settings"]
 
 
 # --------------------------------------------------------------------------------------
