@@ -100,6 +100,11 @@ EVIDENCE_EXCERPT_MAX_CHARS = 600
 DEFAULT_EVIDENCE_MAX_ITEMS = 60
 DEFAULT_EVIDENCE_PER_BUCKET = 4
 
+# Phase 3B -- generation.py (see docs/statistics_and_evidence.md and the Phase 3B
+# checkpoint report for the manual stats -> evidence -> export-prompt -> validate ->
+# render workflow).
+GENERATION_SCHEMA_VERSION = 1
+
 
 def is_active_cycle_venue(venue_family: str, venue_year: int | None) -> bool:
     """True if this family/year pair is one of the venues currently in an active review

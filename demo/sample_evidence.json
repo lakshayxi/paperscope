@@ -1,0 +1,102 @@
+{
+  "bundle_hash": "demo",
+  "corpus_hash": "9222deb94e5619fc",
+  "count": 4,
+  "generated_at": "2026-07-19T00:00:00Z",
+  "items": [
+    {
+      "content_hash": "91b9d405e75058e7",
+      "corpus_hash": "9222deb94e5619fc",
+      "decision": "unknown",
+      "evidence_id": "ev_2533080833f9d987",
+      "excerpt_length": 170,
+      "excerpt_text": "This is a simple and novel idea: the model becomes active, inspects its current memory/state and accordingly constructs the context to operate on using pre-defined tools.",
+      "forum_id": "GymjF88oGQ",
+      "note_id": "pQ56bGnGwK",
+      "rating_designation": "initial",
+      "rating_value": 8.0,
+      "schema_version": 1,
+      "source_url": "https://openreview.net/forum?id=GymjF88oGQ",
+      "strata": {
+        "decision_bucket": "unknown",
+        "disagreement_bucket": "high",
+        "rating_bucket": "high",
+        "rebuttal_bucket": "present",
+        "year": "2026"
+      },
+      "venue_family": "iclr",
+      "venue_year": 2026
+    },
+    {
+      "content_hash": "f99bdf0092f9d9a4",
+      "corpus_hash": "9222deb94e5619fc",
+      "decision": "unknown",
+      "evidence_id": "ev_ab03291c6cb43d84",
+      "excerpt_length": 197,
+      "excerpt_text": "The findings are valuable, particularly that CoT can *increase* hallucinations on HSS tasks  and that standard RAG provides no consistent benefit, highlighting the unique challenges of this domain.",
+      "forum_id": "iQsKotob31",
+      "note_id": "QRC3A5I9VH",
+      "rating_designation": "initial",
+      "rating_value": 6.0,
+      "schema_version": 1,
+      "source_url": "https://openreview.net/forum?id=iQsKotob31",
+      "strata": {
+        "decision_bucket": "unknown",
+        "disagreement_bucket": "high",
+        "rating_bucket": "high",
+        "rebuttal_bucket": "present",
+        "year": "2026"
+      },
+      "venue_family": "iclr",
+      "venue_year": 2026
+    },
+    {
+      "content_hash": "291229b3941f877a",
+      "corpus_hash": "9222deb94e5619fc",
+      "decision": "unknown",
+      "evidence_id": "ev_dae06b4f79623f62",
+      "excerpt_length": 113,
+      "excerpt_text": "It is challenging to identify sufficient additional value that this paper contributes to the existing literature.",
+      "forum_id": "7QjQ1mpNMX",
+      "note_id": "Y0M7kTngcK",
+      "rating_designation": "initial",
+      "rating_value": 2.0,
+      "schema_version": 1,
+      "source_url": "https://openreview.net/forum?id=7QjQ1mpNMX",
+      "strata": {
+        "decision_bucket": "unknown",
+        "disagreement_bucket": "low",
+        "rating_bucket": "low",
+        "rebuttal_bucket": "present",
+        "year": "2026"
+      },
+      "venue_family": "iclr",
+      "venue_year": 2026
+    },
+    {
+      "content_hash": "86a21c643ba0c5fb",
+      "corpus_hash": "9222deb94e5619fc",
+      "decision": "unknown",
+      "evidence_id": "ev_2fdab80b0c3d9eb0",
+      "excerpt_length": 137,
+      "excerpt_text": "The comparison primarily focuses on outcome-based versus rubric-based rewards, but an important baseline, generative rewards, is missing.",
+      "forum_id": "FGkknrhv09",
+      "note_id": "dk5qk2JQi4",
+      "rating_designation": "initial",
+      "rating_value": 2.0,
+      "schema_version": 1,
+      "source_url": "https://openreview.net/forum?id=FGkknrhv09",
+      "strata": {
+        "decision_bucket": "unknown",
+        "disagreement_bucket": "low",
+        "rating_bucket": "low",
+        "rebuttal_bucket": "absent",
+        "year": "2026"
+      },
+      "venue_family": "iclr",
+      "venue_year": 2026
+    }
+  ],
+  "schema_version": 1,
+  "seed": 42
+}

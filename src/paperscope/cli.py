@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 from paperscope import evidence as evidence_mod
+from paperscope import generation as generation_mod
 from paperscope import refresh_policy as refresh_policy_mod
 from paperscope import statistics as statistics_mod
 from paperscope import storage
@@ -232,6 +233,57 @@ def cmd_evidence(args) -> None:
     print(f"wrote {len(items)} evidence items to {out_path}")
 
 
+def cmd_export_prompt(args) -> None:
+    try:
+        manifest = generation_mod.export_prompt(
+            statistics_path=Path(args.statistics), evidence_path=Path(args.evidence), output_dir=Path(args.output)
+        )
+    except (OSError, ValueError) as e:
+        sys.exit(f"export-prompt failed: {e}")
+    print(f"wrote prompt bundle to {args.output} (content_hash={manifest['content_hash']})")
+
+
+def cmd_render(args) -> None:
+    claims_payload = json.loads(Path(args.claims).read_text())
+    statistics_payload = json.loads(Path(args.statistics).read_text())
+    evidence_payload = json.loads(Path(args.evidence).read_text())
+    try:
+        md = generation_mod.render_markdown(claims_payload, statistics_payload, evidence_payload)
+    except generation_mod.GenerationValidationError as e:
+        sys.exit(f"render failed -- claims did not pass validation: {e}")
+    storage.atomic_write_text(Path(args.output), md)
+    print(f"wrote {args.output}")
+
+
+def cmd_generate(args) -> None:
+    # lazy import: only this command ever touches the `anthropic`-backed provider path
+    from paperscope import llm_provider
+
+    prompt_dir = Path(args.prompt_dir)
+    statistics_payload = json.loads((prompt_dir / "statistics.json").read_text())
+    evidence_payload = json.loads((prompt_dir / "evidence.json").read_text())
+
+    try:
+        raw_claims = llm_provider.run_provider_generation(
+            prompt_dir=prompt_dir, provider=args.provider, model=args.model,
+            max_tokens=args.max_tokens, temperature=args.temperature,
+        )
+        generation_mod.validate_claims(raw_claims, statistics_payload=statistics_payload, evidence_payload=evidence_payload)
+    except (ValueError, generation_mod.GenerationValidationError) as e:
+        sys.exit(f"generate failed: {e}")
+
+    claims_path = prompt_dir / "claims.json"
+    storage.atomic_write_text(claims_path, json.dumps(raw_claims, indent=2, sort_keys=True))
+
+    manifest = generation_mod.build_manifest(
+        statistics_payload=statistics_payload, evidence_payload=evidence_payload,
+        provider=args.provider, model=args.model,
+        generation_params={"max_tokens": args.max_tokens, "temperature": args.temperature},
+    )
+    generation_mod.write_manifest_json(prompt_dir / "manifest.json", manifest)
+    print(f"wrote {claims_path}")
+
+
 def cmd_discover(args) -> None:
     client = get_client(args.api_version)
     inv = discover_review_invitation(client, args.venue_id, args.api_version)
@@ -299,6 +351,32 @@ def build_parser() -> argparse.ArgumentParser:
     evidence_p.add_argument("--held-out", default=None,
                              help="Path to a JSON list of forum IDs to exclude (held-out evaluation set)")
     evidence_p.set_defaults(func=cmd_evidence)
+
+    export_p = sub.add_parser("export-prompt", help="Export a self-contained generation prompt bundle (no API key needed)")
+    export_p.add_argument("--statistics", required=True, help="Path to a statistics.json produced by `paperscope stats`")
+    export_p.add_argument("--evidence", required=True, help="Path to an evidence bundle produced by `paperscope evidence`")
+    export_p.add_argument("--output", default=str(ARTIFACTS_DIR / "generation"),
+                           help="Output directory for prompt.md, statistics.json, evidence.json, "
+                                "response_schema.json, manifest.json")
+    export_p.set_defaults(func=cmd_export_prompt)
+
+    render_p = sub.add_parser("render", help="Deterministically render validated claims JSON into Markdown")
+    render_p.add_argument("--claims", required=True, help="Path to a claims.json matching response_schema.json")
+    render_p.add_argument("--statistics", required=True, help="Path to the statistics.json the claims were grounded in")
+    render_p.add_argument("--evidence", required=True, help="Path to the evidence bundle the claims were grounded in")
+    render_p.add_argument("--output", default=str(ARTIFACTS_DIR / "reference.md"), help="Output path for the rendered Markdown")
+    render_p.set_defaults(func=cmd_render)
+
+    generate_p = sub.add_parser(
+        "generate", help="[llm] optional: call a provider to fill in an exported prompt bundle's claims.json"
+    )
+    generate_p.add_argument("--provider", default="anthropic", choices=["anthropic"])
+    generate_p.add_argument("--model", required=True, help="Model name, e.g. claude-sonnet-5")
+    generate_p.add_argument("--prompt-dir", default=str(ARTIFACTS_DIR / "generation"),
+                             help="Directory previously written by `export-prompt`")
+    generate_p.add_argument("--max-tokens", type=int, default=4096)
+    generate_p.add_argument("--temperature", type=float, default=0.0)
+    generate_p.set_defaults(func=cmd_generate)
 
     return parser
 

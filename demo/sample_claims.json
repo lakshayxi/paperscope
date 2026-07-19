@@ -1,0 +1,151 @@
+{
+  "claims": [
+    {
+      "claim_id": "score_mean_rating",
+      "claim_type": "deterministic_fact",
+      "evidence_ids": [],
+      "limitations": [
+        "Computed over only 10 forums from a single, still-active review cycle -- not a stable venue-wide baseline yet."
+      ],
+      "section": "score_calibration",
+      "statistic_refs": [
+        "iclr/2026/paper_mean_rating.mean"
+      ],
+      "support_level": "limited",
+      "text": "Across this sample, the paper-level mean initial rating is 4.33 (population stdev 1.34, n=10 forums).",
+      "year_scope": [
+        2026
+      ]
+    },
+    {
+      "claim_id": "score_rating_decision_crosstab",
+      "claim_type": "statistical_pattern",
+      "evidence_ids": [],
+      "limitations": [
+        "Decisions are 100% unresolved in this sample (active review cycle) -- this describes reviewer ratings only, not accept/reject outcomes."
+      ],
+      "section": "score_calibration",
+      "statistic_refs": [
+        "iclr/2026/rating_decision_crosstab",
+        "iclr/2026/decision_distribution"
+      ],
+      "support_level": "limited",
+      "text": "Of 37 individual reviewer ratings, 8 fall in the low tercile, 17 in the medium tercile, and 12 in the high tercile; none of the 10 forums have a posted decision yet.",
+      "year_scope": [
+        2026
+      ]
+    },
+    {
+      "claim_id": "accept_signal_novel_simple_idea",
+      "claim_type": "evidence_excerpt",
+      "evidence_ids": [
+        "ev_2533080833f9d987"
+      ],
+      "limitations": [
+        "A single reviewer's assessment of a single paper (initial rating 8/10), not a corpus-wide pattern."
+      ],
+      "section": "accept_signals",
+      "statistic_refs": [],
+      "support_level": "single_instance",
+      "text": "This is a simple and novel idea: the model becomes active, inspects its current memory/state and accordingly constructs the context to operate on using pre-defined tools.",
+      "year_scope": [
+        2026
+      ]
+    },
+    {
+      "claim_id": "accept_signal_addresses_clear_gap",
+      "claim_type": "evidence_excerpt",
+      "evidence_ids": [
+        "ev_ab03291c6cb43d84"
+      ],
+      "limitations": [
+        "A single reviewer's assessment (initial rating 6/10), not a corpus-wide pattern."
+      ],
+      "section": "accept_signals",
+      "statistic_refs": [],
+      "support_level": "single_instance",
+      "text": "The findings are valuable, particularly that CoT can *increase* hallucinations on HSS tasks  and that standard RAG provides no consistent benefit, highlighting the unique challenges of this domain.",
+      "year_scope": [
+        2026
+      ]
+    },
+    {
+      "claim_id": "reject_signal_unclear_added_value",
+      "claim_type": "evidence_excerpt",
+      "evidence_ids": [
+        "ev_dae06b4f79623f62"
+      ],
+      "limitations": [
+        "A single reviewer's assessment (initial rating 2/10), not a corpus-wide pattern."
+      ],
+      "section": "reject_signals",
+      "statistic_refs": [],
+      "support_level": "single_instance",
+      "text": "It is challenging to identify sufficient additional value that this paper contributes to the existing literature.",
+      "year_scope": [
+        2026
+      ]
+    },
+    {
+      "claim_id": "reject_signal_missing_baseline",
+      "claim_type": "evidence_excerpt",
+      "evidence_ids": [
+        "ev_2fdab80b0c3d9eb0"
+      ],
+      "limitations": [
+        "A single reviewer's assessment (initial rating 2/10), not a corpus-wide pattern."
+      ],
+      "section": "reject_signals",
+      "statistic_refs": [],
+      "support_level": "single_instance",
+      "text": "The comparison primarily focuses on outcome-based versus rubric-based rewards, but an important baseline, generative rewards, is missing.",
+      "year_scope": [
+        2026
+      ]
+    },
+    {
+      "claim_id": "hidden_criteria_missing_baseline_pattern",
+      "claim_type": "llm_interpretation",
+      "evidence_ids": [
+        "ev_dae06b4f79623f62",
+        "ev_2fdab80b0c3d9eb0"
+      ],
+      "limitations": [
+        "Based on only 2 of 37 reviews in a 10-forum sample -- an interpretive pattern, not a validated corpus-wide finding."
+      ],
+      "section": "hidden_criteria",
+      "statistic_refs": [],
+      "support_level": "limited",
+      "text": "In this small sample, both low-rated reviews cited here criticize the paper for not sufficiently distinguishing itself from -- or comparing against -- existing work, suggesting reviewers weigh differentiation from prior work heavily even when a method is technically sound.",
+      "year_scope": [
+        2026
+      ]
+    },
+    {
+      "claim_id": "rebuttal_effectiveness_no_data_yet",
+      "claim_type": "insufficient_evidence",
+      "evidence_ids": [],
+      "limitations": [
+        "The review cycle is still active and no revised-score snapshot has been fetched yet; see statistics.json's initial_to_final_rating_change (count=0)."
+      ],
+      "section": "rebuttal_effectiveness",
+      "statistic_refs": [],
+      "support_level": "none",
+      "text": "No initial-to-final rating changes have been captured for this sample yet, so no claim about rebuttal effectiveness can be supported.",
+      "year_scope": []
+    },
+    {
+      "claim_id": "year_over_year_drift_no_data_yet",
+      "claim_type": "insufficient_evidence",
+      "evidence_ids": [],
+      "limitations": [
+        "A drift claim requires at least two venue-years of comparable statistics; this corpus currently has one."
+      ],
+      "section": "year_over_year_drift",
+      "statistic_refs": [],
+      "support_level": "none",
+      "text": "This sample covers only ICLR 2026, so no year-over-year drift claim can be supported yet.",
+      "year_scope": []
+    }
+  ]
+}

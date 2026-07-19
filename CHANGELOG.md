@@ -3,6 +3,21 @@
 ## Unreleased
 
 ### Added
+- `paperscope export-prompt` / `paperscope render` (`src/paperscope/generation.py`):
+  evidence-grounded structured generation. The model's only output contract is
+  structured JSON (`{"claims": [...]}`, never free-text Markdown); `validate_claims`
+  rejects unresolvable evidence/statistic references, invented quotations, numeric
+  claims with no statistic backing, duplicate claim IDs, unsupported or over-reaching
+  venue/year scope, and missing limitations/support levels, collecting every violation
+  before raising. `render` always re-validates before rendering, so nothing reaches
+  Markdown without passing structured validation first. `export-prompt` needs no API key
+  and writes a self-contained bundle (prompt, statistics, evidence, response schema,
+  reproducibility manifest) for the primary supported manual workflow (Claude Code by
+  hand). See `docs/generation.md`.
+- `paperscope generate` (optional, `src/paperscope/llm_provider.py`): automates the
+  "ask the model" step behind the `[llm]` extra. `anthropic` is referenced in exactly
+  this one file in the package, and only inside a function body — every other command
+  has zero dependency on it, enforced by `tests/test_optional_anthropic.py`.
 - `paperscope stats` (`src/paperscope/statistics.py`): deterministic, venue/year-scoped
   corpus statistics (counts, missing-data rates, rating/confidence distributions,
   decision distribution, paper-level mean/variance, reviewer disagreement, initial-to-
