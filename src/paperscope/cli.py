@@ -8,6 +8,7 @@ import re
 import sys
 from pathlib import Path
 
+from paperscope import evaluation as evaluation_mod
 from paperscope import evidence as evidence_mod
 from paperscope import generation as generation_mod
 from paperscope import refresh_policy as refresh_policy_mod
@@ -312,6 +313,50 @@ def cmd_validate_skill(args) -> None:
     print(f"skill at {args.path} is valid")
 
 
+def cmd_prepare_eval(args) -> None:
+    try:
+        manifest = evaluation_mod.prepare_eval(
+            corpus_path=Path(args.corpus),
+            calibration_forums_path=Path(args.calibration_forums),
+            output_dir=Path(args.output),
+            seed=args.seed,
+        )
+    except evaluation_mod.EvaluationDatasetError as e:
+        sys.exit(f"prepare-eval failed: {e}")
+    print(
+        f"wrote evaluation dataset to {args.output} "
+        f"({manifest['eval_forum_count']} forums, calibration_hash={manifest['calibration_hash']})"
+    )
+
+
+def cmd_validate_eval(args) -> None:
+    report = evaluation_mod.run_leakage_validation(
+        Path(args.dataset), Path(args.generic_predictions), Path(args.paperscope_predictions)
+    )
+    if not report.ok:
+        for violation in report.violations:
+            print(f"  - {violation}")
+        sys.exit(f"validate-eval failed: {len(report.violations)} violation(s)")
+    if report.missing_generic_predictions or report.missing_paperscope_predictions:
+        print(f"  note: {len(report.missing_generic_predictions)} missing generic prediction(s), "
+              f"{len(report.missing_paperscope_predictions)} missing paperscope prediction(s)")
+    print(f"dataset at {args.dataset} and both prediction files are valid, comparable, and leakage-free")
+
+
+def cmd_evaluate(args) -> None:
+    try:
+        results = evaluation_mod.evaluate(
+            dataset_dir=Path(args.dataset),
+            generic_predictions_path=Path(args.generic_predictions),
+            paperscope_predictions_path=Path(args.paperscope_predictions),
+            output_dir=Path(args.output),
+            baseline_predictions_path=Path(args.baseline_predictions) if args.baseline_predictions else None,
+        )
+    except evaluation_mod.EvaluationValidationError as e:
+        sys.exit(f"evaluate failed leakage/comparability validation: {e}")
+    print(f"wrote evaluation results + report to {args.output} ({results['dataset']['eval_forum_count']} eval forums)")
+
+
 def cmd_discover(args) -> None:
     from paperscope.discovery import discover_review_invitation
     from paperscope.openreview_client import get_client
@@ -421,6 +466,37 @@ def build_parser() -> argparse.ArgumentParser:
     validate_skill_p = sub.add_parser("validate-skill", help="Validate a built PaperScope skill directory")
     validate_skill_p.add_argument("--path", required=True, help="Path to a skill directory built by build-skill")
     validate_skill_p.set_defaults(func=cmd_validate_skill)
+
+    prepare_eval_p = sub.add_parser(
+        "prepare-eval", help="[Phase 4B] Build a leakage-safe, forum-split evaluation dataset from a full corpus"
+    )
+    prepare_eval_p.add_argument("--corpus", required=True, help="Path to a full corpus JSONL file")
+    prepare_eval_p.add_argument("--calibration-forums", required=True,
+                                 help="Path to a calibration forum-ID list or evidence-bundle-shaped manifest "
+                                      "(frozen before evaluation forums are selected)")
+    prepare_eval_p.add_argument("--output", required=True, help="Output directory for the evaluation dataset")
+    prepare_eval_p.add_argument("--seed", type=int, default=DEFAULT_SEED,
+                                 help=f"Seed recorded for reproducibility (default: {DEFAULT_SEED})")
+    prepare_eval_p.set_defaults(func=cmd_prepare_eval)
+
+    validate_eval_p = sub.add_parser(
+        "validate-eval", help="[Phase 4B] Validate an evaluation dataset + two prediction files for leakage/comparability"
+    )
+    validate_eval_p.add_argument("--dataset", required=True, help="Path to a directory written by prepare-eval")
+    validate_eval_p.add_argument("--generic-predictions", required=True, help="Path to the generic system's predictions JSON")
+    validate_eval_p.add_argument("--paperscope-predictions", required=True, help="Path to the PaperScope system's predictions JSON")
+    validate_eval_p.set_defaults(func=cmd_validate_eval)
+
+    evaluate_p = sub.add_parser(
+        "evaluate", help="[Phase 4B] Score saved generic/PaperScope prediction files against an evaluation dataset"
+    )
+    evaluate_p.add_argument("--dataset", required=True, help="Path to a directory written by prepare-eval")
+    evaluate_p.add_argument("--generic-predictions", required=True, help="Path to the generic system's predictions JSON")
+    evaluate_p.add_argument("--paperscope-predictions", required=True, help="Path to the PaperScope system's predictions JSON")
+    evaluate_p.add_argument("--baseline-predictions", default=None,
+                             help="Optional path to a reviewer-aggregate baseline predictions JSON")
+    evaluate_p.add_argument("--output", required=True, help="Output directory for evaluation_results.json + evaluation_report.md")
+    evaluate_p.set_defaults(func=cmd_evaluate)
 
     return parser
 

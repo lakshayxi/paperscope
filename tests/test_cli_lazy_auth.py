@@ -102,6 +102,9 @@ def test_validate_skill_cli_never_imports_openreview_client_module(built_skill_p
     ["render", "--claims", "a.json", "--statistics", "b.json", "--evidence", "c.json"],
     ["build-skill", "--claims", "a.json", "--statistics", "b.json", "--evidence", "c.json", "--output", "out"],
     ["validate-skill", "--path", "somewhere"],
+    ["prepare-eval", "--corpus", "c.jsonl", "--calibration-forums", "cal.json", "--output", "out"],
+    ["validate-eval", "--dataset", "d", "--generic-predictions", "g.json", "--paperscope-predictions", "p.json"],
+    ["evaluate", "--dataset", "d", "--generic-predictions", "g.json", "--paperscope-predictions", "p.json", "--output", "out"],
 ])
 def test_offline_commands_never_set_needs_auth(argv):
     from paperscope.cli import build_parser

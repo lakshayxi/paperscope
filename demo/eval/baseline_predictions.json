@@ -1,0 +1,73 @@
+{
+  "predictions": [
+    {
+      "accept_probability": null,
+      "decision_prediction": "reject",
+      "forum_id": "eval_001",
+      "rating_prediction": 5.1429,
+      "reasoning_summary": "Constant baseline: calibration-set mean initial rating / majority decision, independent of this forum's own (unseen) labels."
+    },
+    {
+      "accept_probability": null,
+      "decision_prediction": "reject",
+      "forum_id": "eval_002",
+      "rating_prediction": 5.1429,
+      "reasoning_summary": "Constant baseline: calibration-set mean initial rating / majority decision, independent of this forum's own (unseen) labels."
+    },
+    {
+      "accept_probability": null,
+      "decision_prediction": "reject",
+      "forum_id": "eval_003",
+      "rating_prediction": 5.1429,
+      "reasoning_summary": "Constant baseline: calibration-set mean initial rating / majority decision, independent of this forum's own (unseen) labels."
+    },
+    {
+      "accept_probability": null,
+      "decision_prediction": "reject",
+      "forum_id": "eval_004",
+      "rating_prediction": 5.1429,
+      "reasoning_summary": "Constant baseline: calibration-set mean initial rating / majority decision, independent of this forum's own (unseen) labels."
+    },
+    {
+      "accept_probability": null,
+      "decision_prediction": "reject",
+      "forum_id": "eval_005",
+      "rating_prediction": 5.1429,
+      "reasoning_summary": "Constant baseline: calibration-set mean initial rating / majority decision, independent of this forum's own (unseen) labels."
+    },
+    {
+      "accept_probability": null,
+      "decision_prediction": "reject",
+      "forum_id": "eval_006",
+      "rating_prediction": 5.1429,
+      "reasoning_summary": "Constant baseline: calibration-set mean initial rating / majority decision, independent of this forum's own (unseen) labels."
+    },
+    {
+      "accept_probability": null,
+      "decision_prediction": "reject",
+      "forum_id": "eval_007",
+      "rating_prediction": 5.1429,
+      "reasoning_summary": "Constant baseline: calibration-set mean initial rating / majority decision, independent of this forum's own (unseen) labels."
+    },
+    {
+      "accept_probability": null,
+      "decision_prediction": "reject",
+      "forum_id": "eval_008",
+      "rating_prediction": 5.1429,
+      "reasoning_summary": "Constant baseline: calibration-set mean initial rating / majority decision, independent of this forum's own (unseen) labels."
+    }
+  ],
+  "run": {
+    "calibration_hash": "09fc62d5e3f62155",
+    "created_at": "2026-07-20T00:00:00Z",
+    "input_hash": "none",
+    "model": "reviewer_aggregate_baseline",
+    "run_id": "demo_baseline_run_001",
+    "settings": {
+      "calibration_forum_count": 4,
+      "majority_decision": "reject",
+      "mean_initial_rating": 5.1429
+    },
+    "system": "baseline"
+  }
+}

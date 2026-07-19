@@ -1,0 +1,74 @@
+{
+  "predictions": [
+    {
+      "accept_probability": null,
+      "decision_prediction": "accept",
+      "forum_id": "eval_001",
+      "rating_prediction": 6.0,
+      "reasoning_summary": "Generic, uncalibrated fixture prediction -- general reviewing judgment only."
+    },
+    {
+      "accept_probability": null,
+      "decision_prediction": "accept",
+      "forum_id": "eval_002",
+      "rating_prediction": 5.0,
+      "reasoning_summary": "Generic, uncalibrated fixture prediction -- general reviewing judgment only."
+    },
+    {
+      "accept_probability": null,
+      "decision_prediction": "accept",
+      "forum_id": "eval_003",
+      "rating_prediction": 7.0,
+      "reasoning_summary": "Generic, uncalibrated fixture prediction -- general reviewing judgment only."
+    },
+    {
+      "accept_probability": null,
+      "decision_prediction": "accept",
+      "forum_id": "eval_004",
+      "rating_prediction": 3.5,
+      "reasoning_summary": "Generic, uncalibrated fixture prediction -- general reviewing judgment only."
+    },
+    {
+      "accept_probability": null,
+      "decision_prediction": "accept",
+      "forum_id": "eval_005",
+      "rating_prediction": 5.8,
+      "reasoning_summary": "Generic, uncalibrated fixture prediction -- general reviewing judgment only."
+    },
+    {
+      "accept_probability": null,
+      "decision_prediction": "accept",
+      "forum_id": "eval_006",
+      "rating_prediction": 4.5,
+      "reasoning_summary": "Generic, uncalibrated fixture prediction -- general reviewing judgment only."
+    },
+    {
+      "accept_probability": null,
+      "decision_prediction": "accept",
+      "forum_id": "eval_007",
+      "rating_prediction": 6.5,
+      "reasoning_summary": "Generic, uncalibrated fixture prediction -- general reviewing judgment only."
+    },
+    {
+      "accept_probability": null,
+      "decision_prediction": "accept",
+      "forum_id": "eval_008",
+      "rating_prediction": 5.0,
+      "reasoning_summary": "Generic, uncalibrated fixture prediction -- general reviewing judgment only."
+    }
+  ],
+  "run": {
+    "calibration_hash": "none",
+    "created_at": "2026-07-20T00:00:00Z",
+    "input_hash": "76b93a059706d2b3",
+    "model": "demo-fixture-model",
+    "run_id": "demo_generic_run_001",
+    "settings": {
+      "fixture": true,
+      "note": "SYNTHETIC DEMO FIXTURE -- hand-authored predictions for documentation purposes only. Not a real model run and not a real benchmark result.",
+      "prompt": "generic_reviewer_v1",
+      "temperature": 0.0
+    },
+    "system": "generic"
+  }
+}

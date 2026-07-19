@@ -110,6 +110,25 @@ GENERATION_SCHEMA_VERSION = 1
 SKILL_SCHEMA_VERSION = 1
 SKILL_NAME = "paperscope-reviewer"
 
+# Phase 4B -- evaluation.py (see docs/evaluation.md). Leakage-safe, offline evaluation of
+# saved prediction files against a corpus-derived, forum-split dataset -- no LLM/API calls
+# happen anywhere in this module.
+EVALUATION_SCHEMA_VERSION = 1
+# Per-(venue_family, venue_year) metric breakdowns are only reported when the stratum has
+# at least this many labeled+predicted forums -- below that a per-stratum MAE/accuracy/etc
+# is noise, not signal.
+EVAL_MIN_BREAKDOWN_N = 5
+# Brier score / ECE require this many probability-labeled forums before they're computed
+# at all; below it "not computed" is reported instead of a misleadingly precise number.
+EVAL_MIN_PROBABILITY_N = 20
+# Below this many forums, evaluation_report.md emits an explicit small-sample warning
+# next to any metric computed from that task's sample.
+EVAL_SMALL_SAMPLE_WARNING_N = 20
+# Sentinel a prediction run's `run.calibration_hash` must equal when no venue calibration
+# was used (the "generic" system) -- lets `evaluate`/`validate-eval` tell "no calibration"
+# apart from "calibration_hash omitted by mistake".
+NO_CALIBRATION = "none"
+
 
 def is_active_cycle_venue(venue_family: str, venue_year: int | None) -> bool:
     """True if this family/year pair is one of the venues currently in an active review

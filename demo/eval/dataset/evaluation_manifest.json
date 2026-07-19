@@ -1,0 +1,21 @@
+{
+  "calibration_hash": "09fc62d5e3f62155",
+  "corpus_hash": "9826e6c37894a352",
+  "eval_forum_count": 8,
+  "generated_at": "2026-07-20T00:00:00Z",
+  "model_inputs_hash": "76b93a059706d2b3",
+  "private_labels_hash": "2f14f941144df1ea",
+  "schema_version": 1,
+  "seed": 42,
+  "tasks": {
+    "final_decision": {
+      "eligible_forum_count": 6,
+      "target_definition": "ForumRecord.decision.normalized, restricted to {accept, reject}. Never derived from a rating threshold. Withdrawn, desk-rejected, and unresolved (unknown) forums are excluded from the eligible pool; counts are still reported (see split_manifest.json exclusions and each private_labels.jsonl row's final_decision_excluded_reason)."
+    },
+    "initial_rating": {
+      "aggregation": "mean_of_initial_ratings",
+      "eligible_forum_count": 8,
+      "target_definition": "Unweighted arithmetic mean of every review's initial_rating.value for the forum (final/revised ratings are never used). A forum is eligible only if at least one review has a non-null initial rating."
+    }
+  }
+}

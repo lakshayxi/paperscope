@@ -3,6 +3,31 @@
 ## Unreleased
 
 ### Added
+- `paperscope prepare-eval` / `paperscope validate-eval` / `paperscope evaluate`
+  (`src/paperscope/evaluation.py`, Phase 4B): a leakage-safe, fully offline evaluation
+  harness for saved prediction files -- no LLM/API calls anywhere in this module.
+  `prepare-eval` freezes and hashes a calibration forum-ID set *before* selecting
+  evaluation forums (`corpus forums - calibration forums`, further excluding forums with
+  no usable initial-rating/decision label or no title/abstract), and writes a
+  model-visible `model_inputs.jsonl` (a closed schema: forum_id/venue/title/abstract/
+  input_tier only -- no review, rebuttal, decision, or rating field can ever appear on
+  it) plus a separate `private_labels.jsonl` never intended for model context.
+  Initial-rating and final-decision are two independent tasks with their own
+  eligibility/target fields per forum -- final-decision is read directly from
+  `Decision.normalized`, never derived from a rating threshold, and withdrawn/desk-
+  rejected/unresolved forums are excluded from that task's eligible pool (counts still
+  reported). `validate-eval`/`evaluate` collect every leakage/comparability violation
+  (dataset hash consistency, calibration/evaluation disjointness, prediction schema,
+  dataset membership, and generic-vs-PaperScope run comparability -- identical model/
+  settings/input hashes and forum sets, calibration reference the only allowed
+  difference) before failing, and `evaluate` re-runs every check itself rather than
+  trusting a prior `validate-eval` pass. Metrics: MAE/median absolute error/Spearman
+  (pure Python, no numpy/scipy) for initial-rating; accuracy/precision/recall/F1/
+  confusion matrix for final-decision; Brier score/ECE only when `accept_probability` is
+  present for an adequate sample -- never approximated from `rating_prediction`. An
+  optional reviewer-aggregate baseline predicts a constant rating/decision derived only
+  from calibration-set aggregates, never an eval forum's own label. See
+  `docs/evaluation.md` and the synthetic fixtures under `demo/eval/`.
 - `paperscope build-skill` / `paperscope validate-skill`
   (`src/paperscope/skill_builder.py`, Phase 4A): builds an installable
   `paperscope-reviewer` Claude Code skill from validated Phase 3 claims/statistics/

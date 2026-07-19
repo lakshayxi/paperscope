@@ -1,0 +1,50 @@
+{
+  "calibration_forum_count": 4,
+  "calibration_forum_ids": [
+    "cal_001",
+    "cal_002",
+    "cal_003",
+    "cal_004"
+  ],
+  "calibration_forums_found_in_corpus": 4,
+  "calibration_hash": "09fc62d5e3f62155",
+  "corpus_hash": "9826e6c37894a352",
+  "disjoint": true,
+  "eval_forum_count": 8,
+  "exclusion_counts": {
+    "in_calibration_set": 4
+  },
+  "exclusions": [
+    {
+      "forum_id": "cal_001",
+      "reason": "in_calibration_set"
+    },
+    {
+      "forum_id": "cal_002",
+      "reason": "in_calibration_set"
+    },
+    {
+      "forum_id": "cal_003",
+      "reason": "in_calibration_set"
+    },
+    {
+      "forum_id": "cal_004",
+      "reason": "in_calibration_set"
+    }
+  ],
+  "generated_at": "2026-07-20T00:00:00Z",
+  "schema_version": 1,
+  "seed": 42,
+  "stratification": {
+    "calibration": {
+      "iclr/2024": 2,
+      "iclr/2025": 2
+    },
+    "evaluation": {
+      "iclr/2024": 2,
+      "iclr/2025": 2,
+      "neurips/2024": 2,
+      "neurips/2025": 2
+    }
+  }
+}

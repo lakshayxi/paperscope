@@ -1,0 +1,74 @@
+{
+  "predictions": [
+    {
+      "accept_probability": 0.82,
+      "decision_prediction": "accept",
+      "forum_id": "eval_001",
+      "rating_prediction": 6.7,
+      "reasoning_summary": "PaperScope fixture prediction -- venue-calibrated reference applied."
+    },
+    {
+      "accept_probability": 0.15,
+      "decision_prediction": "reject",
+      "forum_id": "eval_002",
+      "rating_prediction": 3.7,
+      "reasoning_summary": "PaperScope fixture prediction -- venue-calibrated reference applied."
+    },
+    {
+      "accept_probability": 0.82,
+      "decision_prediction": "accept",
+      "forum_id": "eval_003",
+      "rating_prediction": 7.7,
+      "reasoning_summary": "PaperScope fixture prediction -- venue-calibrated reference applied."
+    },
+    {
+      "accept_probability": 0.15,
+      "decision_prediction": "reject",
+      "forum_id": "eval_004",
+      "rating_prediction": 2.2,
+      "reasoning_summary": "PaperScope fixture prediction -- venue-calibrated reference applied."
+    },
+    {
+      "accept_probability": 0.82,
+      "decision_prediction": "accept",
+      "forum_id": "eval_005",
+      "rating_prediction": 6.5,
+      "reasoning_summary": "PaperScope fixture prediction -- venue-calibrated reference applied."
+    },
+    {
+      "accept_probability": 0.15,
+      "decision_prediction": "reject",
+      "forum_id": "eval_006",
+      "rating_prediction": 3.2,
+      "reasoning_summary": "PaperScope fixture prediction -- venue-calibrated reference applied."
+    },
+    {
+      "accept_probability": 0.82,
+      "decision_prediction": "accept",
+      "forum_id": "eval_007",
+      "rating_prediction": 5.2,
+      "reasoning_summary": "PaperScope fixture prediction -- venue-calibrated reference applied."
+    },
+    {
+      "accept_probability": 0.82,
+      "decision_prediction": "accept",
+      "forum_id": "eval_008",
+      "rating_prediction": 5.7,
+      "reasoning_summary": "PaperScope fixture prediction -- venue-calibrated reference applied."
+    }
+  ],
+  "run": {
+    "calibration_hash": "09fc62d5e3f62155",
+    "created_at": "2026-07-20T00:00:00Z",
+    "input_hash": "76b93a059706d2b3",
+    "model": "demo-fixture-model",
+    "run_id": "demo_paperscope_run_001",
+    "settings": {
+      "fixture": true,
+      "note": "SYNTHETIC DEMO FIXTURE -- hand-authored predictions for documentation purposes only. Not a real model run and not a real benchmark result.",
+      "prompt": "generic_reviewer_v1",
+      "temperature": 0.0
+    },
+    "system": "paperscope"
+  }
+}
