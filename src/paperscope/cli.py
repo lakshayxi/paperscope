@@ -22,8 +22,6 @@ from paperscope.config import (
     DEFAULT_SEED,
     VENUES,
 )
-from paperscope.discovery import discover_review_invitation
-from paperscope.openreview_client import auth_mode, get_client
 from paperscope.parsing import build_forum_record
 from paperscope.sampling import VenueCursor, fetch_unseen_submissions
 
@@ -66,6 +64,11 @@ def _refresh_forum(client, record) -> tuple[object | None, bool]:
 
 
 def cmd_fetch_venue(args) -> None:
+    # lazy import: keeps offline commands (stats/evidence/export-prompt/render/
+    # build-skill/validate-skill) from ever importing openreview_client -- see
+    # tests/test_cli_lazy_auth.py.
+    from paperscope.openreview_client import get_client
+
     families = [f.lower() for f in args.family] if args.family else None
     years = [int(y) for y in args.years] if args.years else None
     if not families:
@@ -150,6 +153,8 @@ def cmd_fetch_venue(args) -> None:
 
 
 def cmd_fetch_forum(args) -> None:
+    from paperscope.openreview_client import get_client
+
     forum_id = args.url
     if forum_id.startswith("http"):
         from urllib.parse import parse_qs, urlparse
@@ -308,6 +313,9 @@ def cmd_validate_skill(args) -> None:
 
 
 def cmd_discover(args) -> None:
+    from paperscope.discovery import discover_review_invitation
+    from paperscope.openreview_client import get_client
+
     client = get_client(args.api_version)
     inv = discover_review_invitation(client, args.venue_id, args.api_version)
     print(inv or "not found")
@@ -340,11 +348,11 @@ def build_parser() -> argparse.ArgumentParser:
                           help="Stop refreshing unresolved records older than this many days (default: 180)")
     venue_p.add_argument("--refresh-max-attempts", type=int, default=6,
                           help="Mark a forum unavailable after this many failed refresh attempts (default: 6)")
-    venue_p.set_defaults(func=cmd_fetch_venue)
+    venue_p.set_defaults(func=cmd_fetch_venue, needs_auth=True)
 
     forum_p = fetch_sub.add_parser("forum", help="Fetch a single forum by URL or ID")
     forum_p.add_argument("--url", required=True, help="Forum URL or raw forum ID")
-    forum_p.set_defaults(func=cmd_fetch_forum)
+    forum_p.set_defaults(func=cmd_fetch_forum, needs_auth=True)
 
     migrate_p = sub.add_parser("migrate", help="Import a legacy corpus_<family>.json into the new schema")
     migrate_p.add_argument("legacy_corpus", help="Path to the legacy corpus JSON file")
@@ -353,7 +361,7 @@ def build_parser() -> argparse.ArgumentParser:
     discover_p = sub.add_parser("discover", help="Debug: discover a venue's review invitation ID")
     discover_p.add_argument("venue_id")
     discover_p.add_argument("--api-version", choices=["v1", "v2"], default="v2")
-    discover_p.set_defaults(func=cmd_discover)
+    discover_p.set_defaults(func=cmd_discover, needs_auth=True)
 
     stats_p = sub.add_parser("stats", help="Compute deterministic venue/year-scoped corpus statistics")
     stats_p.add_argument("--corpus", required=True, help="Path to a corpus JSONL file (full or public tier)")
@@ -420,7 +428,14 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> None:
     parser = build_parser()
     args = parser.parse_args(argv)
-    print(f"[paperscope] auth mode: {auth_mode()}", file=sys.stderr)
+    # Only fetch/discover commands (marked needs_auth=True on their subparser) resolve
+    # credentials or print the selected auth mode -- offline commands (stats/evidence/
+    # export-prompt/render/build-skill/validate-skill/migrate) must never import
+    # openreview_client, let alone construct a client. See tests/test_cli_lazy_auth.py.
+    if getattr(args, "needs_auth", False):
+        from paperscope.openreview_client import auth_mode
+
+        print(f"[paperscope] auth mode: {auth_mode()}", file=sys.stderr)
     args.func(args)
 
 
