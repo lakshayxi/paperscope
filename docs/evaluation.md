@@ -204,6 +204,51 @@ Neither file claims statistical significance — the report opens with an explic
 fire under `EVAL_SMALL_SAMPLE_WARNING_N` (20) or when the evaluation set covers a single
 venue family.
 
+## Replicated ICLR 2024 pilot results
+
+PaperScope was evaluated in two disjoint ICLR 2024 abstract-only pilots using the same
+frozen 40-forum calibration set (`calibration_hash=0fe31f889fd66235`).
+
+The two conditions used the same model and recorded settings:
+
+- Model: Sonnet 5
+- Input: title and abstract only
+- Effort: high
+- Generation mode: Claude Code subscription
+- Generic condition: no venue calibration reference
+- PaperScope condition: frozen ICLR calibration reference
+
+| Run | Rating n | Resolved decision n | Generic MAE | PaperScope MAE | Generic Spearman | PaperScope Spearman | Generic accuracy | PaperScope accuracy |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Run 1 | 25 | 15 | 1.4833 | 1.1487 | 0.3680 | 0.5404 | 0.6000 | 0.8000 |
+| Run 2 | 25 | 20 | 1.1687 | 0.9260 | 0.4361 | 0.5946 | 0.6500 | 0.7500 |
+
+Across both runs:
+
+- Rating-eligible forums: **50**
+- Generic weighted MAE: **1.3260**
+- PaperScope weighted MAE: **1.0374**
+- Relative MAE reduction: **21.8%**
+- Resolved decision forums: **35**
+- Generic decision accuracy: **62.9%**
+- PaperScope decision accuracy: **77.1%**
+- Generic false accepts: **9**
+- PaperScope false accepts: **2**
+
+PaperScope consistently reduced rating error, improved rank correlation, and reduced
+false accepts. The trade-off was lower acceptance recall: pooled false rejects increased
+from 4 to 6.
+
+Probability calibration did not improve in Run 2, the only run large enough for the
+configured probability metrics: Brier score changed from 0.1864 to 0.1874 and ECE from
+0.2935 to 0.3090.
+
+These are descriptive pilot results, not claims of statistical significance or
+cross-venue generalization. Both prediction conditions were generated manually in
+separate fresh Claude Code sessions. Claude Code subscription runs do not expose a
+controllable temperature or guarantee API-level deterministic reproduction.
+
+
 ## Reviewer-aggregate baseline (optional)
 
 `compute_reviewer_aggregate_baseline` derives a naive constant baseline —
@@ -219,9 +264,9 @@ column in the report. Not run automatically by `prepare-eval`.
 - Model-visible input is title + abstract only (`input_tier: "abstract_only"`) — the
   current corpus schema (`Paper` in `models.py`) has no full-text field, so there is no
   full-paper-text evaluation condition yet.
-- No random subsampling: every eligible non-calibration forum is included in the
-  evaluation set. `--seed` exists for reproducibility and forward compatibility, not
-  because sampling happens today.
+- By default, every eligible non-calibration forum is included. When
+  `--max-forums` is provided, PaperScope performs deterministic, venue/year-stratified
+  subsampling using the recorded seed.
 - Initial-rating target is an unweighted mean across reviewers — it does not account for
   reviewer confidence or per-venue scale differences (the same known approximation as
   `statistics.py`'s normalized rating distributions).

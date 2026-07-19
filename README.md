@@ -13,6 +13,58 @@ and reviewer language from that venue, not generic AI-assistant intuition. Every
 states its own support level, and venues without a validated reference get an explicit,
 un-calibrated review rather than a guess dressed up as one.
 
+> PaperScope converts historical reviewer evidence into a venue-specific calibration
+> layer and tests whether that layer improves review alignment.
+
+---
+
+## Does venue calibration help?
+
+In two independent ICLR 2024 pilots, venue calibration improved both rating alignment
+and decision accuracy, with a clear recall trade-off.
+
+**The experiment.** Two independent pilots (Run 1 and Run 2) each used two fresh,
+isolated Claude Code sessions to review ICLR 2024 papers from title and abstract only,
+using the same recorded model and effort settings (Sonnet 5, high). One session ran
+without venue calibration ("Generic"); the other used PaperScope's frozen ICLR
+calibration reference ("PaperScope"). Within each pilot, both conditions reviewed the
+same evaluation forums and recorded matching input hashes. The intended experimental
+difference was the presence of the calibration reference, although separate manual LLM
+sessions can still introduce run-to-run variation. Both pilots used the same frozen
+40-forum calibration set (`calibration_hash=0fe31f889fd66235`). Run 1 and Run 2 used
+evaluation sets disjoint from each other, and neither evaluation set overlapped the
+calibration set. Predictions were saved and scored by the leakage-safe offline harness
+described in [`docs/evaluation.md`](docs/evaluation.md); evaluation labels were never
+visible to either condition.
+
+<img src="docs/assets/fig1_headline_impact.svg" alt="Three panels comparing Generic and PaperScope: rating MAE 1.33 down to 1.04 (lower is better), decision accuracy 62.9% up to 77.1% (higher is better), and false accepts 9 down to 2 (fewer is better)" width="100%">
+
+Pooled across both runs (50 rating-eligible forums, 35 resolved decisions):
+
+- **21.8% lower rating error** — weighted MAE 1.3260 → 1.0374
+- **Decision accuracy up 14 points** — 62.9% → 77.1%
+- **False accepts cut from 9 to 2** — the strongest practical effect in either run
+
+**The trade-off.** That accuracy gain came mostly from being pickier, not just more
+accurate overall: pooled false rejects rose from 4 to 6 as false accepts fell from 9 to
+2. PaperScope traded some acceptance recall for a much lower false-accept rate — see the
+confusion matrices below.
+
+<img src="docs/assets/fig2_confusion_matrices.svg" alt="Side-by-side confusion matrices: Generic scores 13 true accepts, 4 false rejects, 9 false accepts, 9 true rejects; PaperScope scores 11 true accepts, 6 false rejects, 2 false accepts, 16 true rejects" width="100%">
+
+Rank correlation (Spearman) also improved in both runs individually (0.368→0.540 and
+0.436→0.595) — calibration reordered which papers looked strong relative to each other,
+not just shifted every score down by a constant. That said, most of the MAE reduction
+still reflects correcting Generic's over-optimism rather than a wholesale reordering.
+Probability calibration did **not** improve: Brier score and ECE were both slightly worse
+under PaperScope in Run 2, the only run large enough to measure them.
+
+These are descriptive pilot results from one venue-year (ICLR 2024), abstract-only
+inputs, generated manually in separate fresh Claude Code sessions — not evidence of
+statistical significance, deterministic reproduction, or generalization across venues.
+Full methodology, metrics, exact hashes, and limitations:
+[`docs/evaluation.md`](docs/evaluation.md).
+
 ---
 
 ## What it does
@@ -52,10 +104,11 @@ generation (`paperscope export-prompt` / `render`, plus an optional `[llm]`-gate
 `generate`), and the skill builder (`paperscope build-skill` / `validate-skill`) are all
 built — deterministic, offline, no API keys needed for any of it; see
 [`docs/statistics_and_evidence.md`](docs/statistics_and_evidence.md),
-[`docs/generation.md`](docs/generation.md), and
-[`docs/skill_building.md`](docs/skill_building.md). See
+[`docs/generation.md`](docs/generation.md),
+[`docs/skill_building.md`](docs/skill_building.md), and
+[`docs/evaluation.md`](docs/evaluation.md). See
 [`docs/redistribution.md`](docs/redistribution.md) for why review text is split into a
-full local tier and a excerpted public tier.
+full local tier and an excerpted public tier.
 
 ---
 
@@ -309,10 +362,16 @@ paperscope/
 │   ├── ci.yml                      # lint + test
 │   └── fetch-reviews.yml           # scheduled fetch automation
 ├── docs/
+│   ├── evaluation.md
 │   ├── redistribution.md
 │   ├── statistics_and_evidence.md
 │   ├── generation.md
-│   └── skill_building.md
+│   ├── skill_building.md
+│   └── assets/                     # evaluation figures + their public source data
+├── scripts/
+│   ├── generate_evaluation_figures.py  # regenerates docs/assets/*.svg from public metrics
+│   ├── generate_predictions.py
+│   └── summarize_run.py
 ├── demo/
 ├── skill/                          # generated by `paperscope build-skill` -- do not hand-edit
 │   ├── SKILL.md                    # Claude Code skill definition

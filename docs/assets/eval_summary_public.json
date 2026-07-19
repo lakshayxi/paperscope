@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "source": "docs/evaluation.md - Replicated ICLR 2024 pilot results",
+  "note": "Public aggregate metrics only. No forum IDs, titles, review text, or individual predictions.",
+  "rating": {
+    "n": 50,
+    "generic_mae": 1.3260,
+    "paperscope_mae": 1.0374,
+    "relative_mae_reduction_pct": 21.8
+  },
+  "decision": {
+    "n": 35,
+    "generic_accuracy_pct": 62.9,
+    "paperscope_accuracy_pct": 77.1,
+    "generic_confusion": {"true_accept": 13, "false_reject": 4, "false_accept": 9, "true_reject": 9},
+    "paperscope_confusion": {"true_accept": 11, "false_reject": 6, "false_accept": 2, "true_reject": 16}
+  }
+}

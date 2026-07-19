@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 254" width="640" height="254" role="img" aria-label="Confusion matrices for Generic and PaperScope decision predictions, pooled across 35 resolved ICLR 2024 forums">
+  <rect x="0" y="0" width="640" height="254" fill="#fcfcfb"/>
+  
+  <g>
+    <text x="24" y="20" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" font-weight="700" fill="#0b0b0b">Generic</text>
+    <text x="171.0" y="48" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#898781">Pred. accept</text>
+    <text x="249.0" y="48" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#898781">Pred. reject</text>
+    <text x="24" y="99.0" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#898781">Actual accept</text>
+    <text x="24" y="177.0" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#898781">Actual reject</text>
+    
+    <rect x="132" y="56" width="76" height="76" fill="#256abf" stroke="#e1e0d9" stroke-width="1" rx="4"/>
+    <text x="170.0" y="94.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#0b0b0b">13</text>
+    <text x="170.0" y="112.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="10" font-weight="600" fill="#0b0b0b" fill-opacity="0.6">TP</text>
+    <rect x="210" y="56" width="76" height="76" fill="#9ec5f4" stroke="#e1e0d9" stroke-width="1" rx="4"/>
+    <text x="248.0" y="94.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#0b0b0b">4</text>
+    <text x="248.0" y="112.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="10" font-weight="600" fill="#0b0b0b" fill-opacity="0.6">FN</text>
+    <rect x="132" y="134" width="76" height="76" fill="#3987e5" stroke="#e1e0d9" stroke-width="1" rx="4"/>
+    <text x="170.0" y="172.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#0b0b0b">9</text>
+    <text x="170.0" y="190.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="10" font-weight="600" fill="#0b0b0b" fill-opacity="0.6">FP</text>
+    <rect x="210" y="134" width="76" height="76" fill="#3987e5" stroke="#e1e0d9" stroke-width="1" rx="4"/>
+    <text x="248.0" y="172.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#0b0b0b">9</text>
+    <text x="248.0" y="190.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="10" font-weight="600" fill="#0b0b0b" fill-opacity="0.6">TN</text>
+  </g>
+  
+  <g>
+    <text x="344" y="20" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" font-weight="700" fill="#0b0b0b">PaperScope</text>
+    <text x="491.0" y="48" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#898781">Pred. accept</text>
+    <text x="569.0" y="48" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#898781">Pred. reject</text>
+    <text x="344" y="99.0" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#898781">Actual accept</text>
+    <text x="344" y="177.0" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#898781">Actual reject</text>
+    
+    <rect x="452" y="56" width="76" height="76" fill="rgba(235, 104, 52, 0.66)" stroke="#e1e0d9" stroke-width="1" rx="4"/>
+    <text x="490.0" y="94.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#0b0b0b">11</text>
+    <text x="490.0" y="112.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="10" font-weight="600" fill="#0b0b0b" fill-opacity="0.6">TP</text>
+    <rect x="530" y="56" width="76" height="76" fill="rgba(235, 104, 52, 0.41)" stroke="#e1e0d9" stroke-width="1" rx="4"/>
+    <text x="568.0" y="94.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#0b0b0b">6</text>
+    <text x="568.0" y="112.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="10" font-weight="600" fill="#0b0b0b" fill-opacity="0.6">FN</text>
+    <rect x="452" y="134" width="76" height="76" fill="rgba(235, 104, 52, 0.22)" stroke="#e1e0d9" stroke-width="1" rx="4"/>
+    <text x="490.0" y="172.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#0b0b0b">2</text>
+    <text x="490.0" y="190.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="10" font-weight="600" fill="#0b0b0b" fill-opacity="0.6">FP</text>
+    <rect x="530" y="134" width="76" height="76" fill="rgba(235, 104, 52, 0.90)" stroke="#e1e0d9" stroke-width="1" rx="4"/>
+    <text x="568.0" y="172.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#0b0b0b">16</text>
+    <text x="568.0" y="190.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="10" font-weight="600" fill="#0b0b0b" fill-opacity="0.6">TN</text>
+  </g>
+  <line x1="320" y1="16" x2="320" y2="190" stroke="#e1e0d9" stroke-width="1"/>
+  <text x="24" y="230" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="11" fill="#898781">Pooled across 35 resolved ICLR 2024 forums. Darker cell = higher count on a shared 0–16 scale.</text>
+</svg>
