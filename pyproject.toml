@@ -38,3 +38,6 @@ ignore = ["E501"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "integration: exercises a real, locally-fetched corpus; skips unless PAPERSCOPE_TEST_CORPUS is set and points at an existing file; never required for CI.",
+]

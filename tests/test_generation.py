@@ -1,7 +1,6 @@
 import copy
 import json
 import sys
-from pathlib import Path
 
 import pytest
 
@@ -9,8 +8,7 @@ from paperscope import evidence as evidence_mod
 from paperscope import generation as gen
 from paperscope import statistics as statistics_mod
 from paperscope import storage
-
-REAL_CORPUS = Path(__file__).parent.parent / "data" / "full" / "iclr.jsonl"
+from tests.conftest import build_synthetic_forum_records
 
 
 def _synthetic_payloads():
@@ -371,8 +369,8 @@ def test_run_provider_generation_rejects_unknown_provider(tmp_path):
 # --------------------------------------------------------------------------------------
 
 
-def test_smoke_export_and_validate_against_real_corpus(tmp_path):
-    records = storage.load_corpus(REAL_CORPUS)
+def test_smoke_export_and_validate_against_synthetic_corpus(tmp_path):
+    records = build_synthetic_forum_records()
     corpus_hash = storage.corpus_hash(records)
     stats = statistics_mod.compute_all_statistics(records, corpus_hash=corpus_hash, generated_at="t0")
     statistics_payload = json.loads(json.dumps({

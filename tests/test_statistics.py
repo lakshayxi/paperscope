@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 
 from paperscope import storage
 from paperscope.models import Decision, ForumRecord, Paper, Rating, Response, Review
@@ -9,8 +8,7 @@ from paperscope.statistics import (
     render_markdown,
     write_statistics_json,
 )
-
-REAL_CORPUS = Path(__file__).parent.parent / "data" / "full" / "iclr.jsonl"
+from tests.conftest import build_synthetic_forum_records
 
 
 def _review(note_id, rating, confidence=None, final_rating=None):
@@ -220,8 +218,8 @@ def test_write_statistics_json_roundtrips(tmp_path):
     assert len(payload["stats"]) == len(stats)
 
 
-def test_smoke_against_real_corpus():
-    records = storage.load_corpus(REAL_CORPUS)
+def test_smoke_against_synthetic_corpus():
+    records = build_synthetic_forum_records()
     corpus_hash = storage.corpus_hash(records)
     stats = compute_all_statistics(records, corpus_hash=corpus_hash, generated_at="t0")
     assert len(stats) > 0

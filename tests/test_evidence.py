@@ -1,5 +1,4 @@
 from collections import Counter
-from pathlib import Path
 
 from paperscope import storage
 from paperscope.evidence import (
@@ -11,9 +10,7 @@ from paperscope.evidence import (
     write_evidence_bundle,
 )
 from paperscope.models import Decision, ForumRecord, Paper, Rating, Response, Review
-
-REAL_CORPUS = Path(__file__).parent.parent / "data" / "full" / "iclr.jsonl"
-PUBLIC_CORPUS = Path(__file__).parent.parent / "data" / "public" / "iclr.jsonl"
+from tests.conftest import build_synthetic_forum_records
 
 
 def _make_review(note_id, rating=None, text="Some review text.", strengths="", weaknesses="", summary=""):
@@ -115,9 +112,9 @@ def test_evidence_id_for_is_stable_across_seeds():
     assert by_pair_a[("f0", "f0_r1")] == evidence_id_for("f0", "f0_r1", "initial")
 
 
-def test_is_public_tier_detects_excerpted_corpus():
-    full_records = storage.load_corpus(REAL_CORPUS)
-    public_records = storage.load_corpus(PUBLIC_CORPUS)
+def test_is_public_tier_detects_excerpted_corpus(full_corpus_path, public_corpus_path):
+    full_records = storage.load_corpus(full_corpus_path)
+    public_records = storage.load_corpus(public_corpus_path)
     assert is_public_tier(full_records) is False
     assert is_public_tier(public_records) is True
 
@@ -127,8 +124,8 @@ def test_is_public_tier_false_even_with_empty_text_on_full_tier():
     assert is_public_tier({"x": forum}) is False
 
 
-def test_select_evidence_raises_on_public_tier():
-    public_records = storage.load_corpus(PUBLIC_CORPUS)
+def test_select_evidence_raises_on_public_tier(public_corpus_path):
+    public_records = storage.load_corpus(public_corpus_path)
     try:
         select_evidence(public_records, seed=42, corpus_hash="h1")
         raise AssertionError("expected ValueError")
@@ -143,16 +140,21 @@ def test_held_out_forum_ids_excluded_from_output():
     assert not any(i.forum_id in held_out for i in items)
 
 
-def test_rating_tercile_bucket_assignment_matches_real_corpus_distribution():
-    # {2.0: 8, 4.0: 17, 6.0: 8, 8.0: 4} -- ties lean toward "medium" (see module docstring)
-    records = storage.load_corpus(REAL_CORPUS)
+def test_rating_tercile_bucket_assignment_matches_hand_computed_distribution():
+    # 6 single-review forums, ratings 1..6: n=6 -> lo_cut=sorted[2]=3, hi_cut=sorted[4]=5.
+    # 1,2 < lo_cut -> low; 6 > hi_cut -> high; 3,4,5 (ties land on a cut) -> medium.
+    records = {
+        f.forum_id: f
+        for f in [_forum(f"t{v}", decision="unknown", reviews=[_make_review(f"t{v}_r", rating=float(v))])
+                  for v in range(1, 7)]
+    }
     items = select_evidence(records, seed=42, corpus_hash="h1", max_items=1000, per_bucket=1000)
     counts = Counter(i.strata["rating_bucket"] for i in items)
-    assert counts == {"low": 8, "medium": 17, "high": 12}
+    assert counts == {"low": 2, "medium": 3, "high": 1}
 
 
 def test_provenance_completeness_and_self_validation():
-    records = storage.load_corpus(REAL_CORPUS)
+    records = build_synthetic_forum_records()
     corpus_hash = storage.corpus_hash(records)
     items = select_evidence(records, seed=42, corpus_hash=corpus_hash)
     assert items  # sanity: the fixture actually produced something
@@ -165,7 +167,7 @@ def test_provenance_completeness_and_self_validation():
 
 
 def test_write_evidence_bundle_roundtrips_and_validates(tmp_path):
-    records = storage.load_corpus(REAL_CORPUS)
+    records = build_synthetic_forum_records()
     corpus_hash = storage.corpus_hash(records)
     items = select_evidence(records, seed=42, corpus_hash=corpus_hash)
     path = tmp_path / "bundle.json"
@@ -175,7 +177,7 @@ def test_write_evidence_bundle_roundtrips_and_validates(tmp_path):
 
 
 def test_bundle_hash_is_deterministic_and_order_independent(tmp_path):
-    records = storage.load_corpus(REAL_CORPUS)
+    records = build_synthetic_forum_records()
     corpus_hash = storage.corpus_hash(records)
     items = select_evidence(records, seed=42, corpus_hash=corpus_hash)
 
@@ -194,7 +196,7 @@ def test_bundle_hash_is_deterministic_and_order_independent(tmp_path):
 
 
 def _one_item(records=None):
-    records = records or storage.load_corpus(REAL_CORPUS)
+    records = records or build_synthetic_forum_records()
     corpus_hash = storage.corpus_hash(records)
     return select_evidence(records, seed=42, corpus_hash=corpus_hash)[0], records
 
